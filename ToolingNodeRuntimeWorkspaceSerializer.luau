@@ -58,62 +58,77 @@ local function isOwned(inst)
 	return false
 end
 
-local function ser(v)
-	local t = typeof(v)
-	if t == "Vector3" then
-		return {"V3", v.X, v.Y, v.Z}
-	elseif t == "Color3" then
-		return {"C3", v.R, v.G, v.B}
-	elseif t == "UDim2" then
-		return {"UD2", v.X.Scale, v.X.Offset, v.Y.Scale, v.Y.Offset}
-	elseif t == "BrickColor" then
-		return {"BC", v.Number}
-	elseif t == "NumberRange" then
-		return {"NR", v.Min, v.Max}
-	elseif t == "EnumItem" then
-		return {"EN", tostring(v.EnumType), v.Name}
-	elseif t == "CFrame" then
-		local p, l, u = v.Position, v.LookVector, v.UpVector
-		return {"CF", p.X, p.Y, p.Z, l.X, l.Y, l.Z, u.X, u.Y, u.Z}
-	elseif t == "Instance" then
-		if v:IsA("Script") or v:IsA("LocalScript") or v:IsA("ModuleScript") then
-			return {"SCRIPT", v.Name}
+	local function safeNum(x)
+		if type(x) == "number" then
+			if x ~= x or x == math.huge or x == -math.huge then
+				return 0
+			end
 		end
-		return nil
-	elseif t == "Rect" then
-		return {"RECT", v.Min.X, v.Min.Y, v.Max.X, v.Max.Y}
-	elseif t == "Vector2" then
-		return {"V2", v.X, v.Y}
-	elseif t == "PhysicalProperties" then
-		return {"PP", v.Density, v.Friction, v.Elasticity, v.FrictionWeight, v.ElasticityWeight}
-	elseif t == "FontFace" then
-		return {"FF", v.Family, v.Weight, v.Style}
-	elseif t == "NumberSequence" then
-		local keys = {}
-		for i, kp in ipairs(v.Keypoints) do
-			keys[i] = {kp.Time, kp.Value, kp.Envelope}
-		end
-		return {"NS", keys}
-	elseif t == "ColorSequence" then
-		local keys = {}
-		for i, kp in ipairs(v.Keypoints) do
-			keys[i] = {kp.Time, kp.Value.R, kp.Value.G, kp.Value.B}
-		end
-		return {"CS", keys}
-	elseif t == "Ray" then
-		return {"RAY", v.Origin.X, v.Origin.Y, v.Origin.Z, v.Direction.X, v.Direction.Y, v.Direction.Z}
-	elseif t == "Region3" then
-		return {"R3", v.Min.X, v.Min.Y, v.Min.Z, v.Max.X, v.Max.Y, v.Max.Z}
-	elseif t == "Vector3int16" then
-		return {"V3I", v.X, v.Y, v.Z}
-	elseif t == "Vector2int16" then
-		return {"V2I", v.X, v.Y}
-	elseif t == "UDim" then
-		return {"UD", v.Scale, v.Offset}
-	else
-		return nil
+		return x
 	end
-end
+
+	local function ser(v)
+		local t = typeof(v)
+		if t == "Vector3" then
+			return {"V3", safeNum(v.X), safeNum(v.Y), safeNum(v.Z)}
+		elseif t == "Color3" then
+			return {"C3", safeNum(v.R), safeNum(v.G), safeNum(v.B)}
+		elseif t == "UDim2" then
+			return {"UD2", safeNum(v.X.Scale), safeNum(v.X.Offset), safeNum(v.Y.Scale), safeNum(v.Y.Offset)}
+		elseif t == "BrickColor" then
+			return {"BC", safeNum(v.Number)}
+		elseif t == "NumberRange" then
+			return {"NR", safeNum(v.Min), safeNum(v.Max)}
+		elseif t == "EnumItem" then
+			return {"EN", tostring(v.EnumType), v.Name}
+		elseif t == "CFrame" then
+			local p, l, u = v.Position, v.LookVector, v.UpVector
+			return {"CF", safeNum(p.X), safeNum(p.Y), safeNum(p.Z), safeNum(l.X), safeNum(l.Y), safeNum(l.Z), safeNum(u.X), safeNum(u.Y), safeNum(u.Z)}
+		elseif t == "Instance" then
+			if v:IsA("Script") or v:IsA("LocalScript") or v:IsA("ModuleScript") then
+				return {"SCRIPT", v.Name}
+			end
+			return nil
+		elseif t == "Rect" then
+			return {"RECT", safeNum(v.Min.X), safeNum(v.Min.Y), safeNum(v.Max.X), safeNum(v.Max.Y)}
+		elseif t == "Vector2" then
+			return {"V2", safeNum(v.X), safeNum(v.Y)}
+		elseif t == "PhysicalProperties" then
+			return {"PP", safeNum(v.Density), safeNum(v.Friction), safeNum(v.Elasticity), safeNum(v.FrictionWeight), safeNum(v.ElasticityWeight)}
+		elseif t == "FontFace" then
+			return {"FF", v.Family, v.Weight, v.Style}
+		elseif t == "NumberSequence" then
+			local keys = {}
+			for i, kp in ipairs(v.Keypoints) do
+				keys[i] = {safeNum(kp.Time), safeNum(kp.Value), safeNum(kp.Envelope)}
+			end
+			return {"NS", keys}
+		elseif t == "ColorSequence" then
+			local keys = {}
+			for i, kp in ipairs(v.Keypoints) do
+				keys[i] = {safeNum(kp.Time), safeNum(kp.Value.R), safeNum(kp.Value.G), safeNum(kp.Value.B)}
+			end
+			return {"CS", keys}
+		elseif t == "Ray" then
+			return {"RAY", safeNum(v.Origin.X), safeNum(v.Origin.Y), safeNum(v.Origin.Z), safeNum(v.Direction.X), safeNum(v.Direction.Y), safeNum(v.Direction.Z)}
+		elseif t == "Region3" then
+			return {"R3", safeNum(v.Min.X), safeNum(v.Min.Y), safeNum(v.Min.Z), safeNum(v.Max.X), safeNum(v.Max.Y), safeNum(v.Max.Z)}
+		elseif t == "Vector3int16" then
+			return {"V3I", safeNum(v.X), safeNum(v.Y), safeNum(v.Z)}
+		elseif t == "Vector2int16" then
+			return {"V2I", safeNum(v.X), safeNum(v.Y)}
+		elseif t == "UDim" then
+			return {"UD", safeNum(v.Scale), safeNum(v.Offset)}
+		elseif t == "string" then
+			return v
+		elseif t == "number" then
+			return safeNum(v)
+		elseif t == "boolean" then
+			return v
+		else
+			return nil
+		end
+	end
 
 local function des(d)
 	if type(d) ~= "table" then return d end
@@ -483,15 +498,22 @@ end
 		local text = fullJson
 		if text == "" then
 			warn("Nothing to save!")
-			return
+			return false
+		end
+		if not writefile then
+			warn("writefile not available")
+			_G.TNR_clipboard = text
+			return false
 		end
 		local success, err = pcall(function()
 			writefile("TNR_WorkspaceSerializer_"..game.GameId..".json", text)
 		end)
 		if success then
 			print("File saved to Desktop!")
+			return true
 		else
 			warn("Save failed: " .. tostring(err))
+			return false
 		end
 	end
 
