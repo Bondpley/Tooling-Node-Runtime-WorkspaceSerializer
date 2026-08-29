@@ -86,8 +86,32 @@ local function ser(v)
 		return {"V2", v.X, v.Y}
 	elseif t == "PhysicalProperties" then
 		return {"PP", v.Density, v.Friction, v.Elasticity, v.FrictionWeight, v.ElasticityWeight}
+	elseif t == "FontFace" then
+		return {"FF", v.Family, v.Weight, v.Style}
+	elseif t == "NumberSequence" then
+		local keys = {}
+		for i, kp in ipairs(v.Keypoints) do
+			keys[i] = {kp.Time, kp.Value, kp.Envelope}
+		end
+		return {"NS", keys}
+	elseif t == "ColorSequence" then
+		local keys = {}
+		for i, kp in ipairs(v.Keypoints) do
+			keys[i] = {kp.Time, kp.Value.R, kp.Value.G, kp.Value.B}
+		end
+		return {"CS", keys}
+	elseif t == "Ray" then
+		return {"RAY", v.Origin.X, v.Origin.Y, v.Origin.Z, v.Direction.X, v.Direction.Y, v.Direction.Z}
+	elseif t == "Region3" then
+		return {"R3", v.Min.X, v.Min.Y, v.Min.Z, v.Max.X, v.Max.Y, v.Max.Z}
+	elseif t == "Vector3int16" then
+		return {"V3I", v.X, v.Y, v.Z}
+	elseif t == "Vector2int16" then
+		return {"V2I", v.X, v.Y}
+	elseif t == "UDim" then
+		return {"UD", v.Scale, v.Offset}
 	else
-		return v
+		return nil
 	end
 end
 
@@ -125,6 +149,30 @@ local function des(d)
 		return Vector2.new(d[2], d[3])
 	elseif tag == "PP" then
 		return PhysicalProperties.new(d[2], d[3], d[4], d[5], d[6])
+	elseif tag == "FF" then
+		return FontFace.new(d[2], d[3], d[4])
+	elseif tag == "NS" then
+		local keys = {}
+		for i, k in ipairs(d[2]) do
+			keys[i] = NumberSequenceKeypoint.new(k[1], k[2], k[3])
+		end
+		return NumberSequence.new(keys)
+	elseif tag == "CS" then
+		local keys = {}
+		for i, k in ipairs(d[2]) do
+			keys[i] = ColorSequenceKeypoint.new(k[1], Color3.new(k[2], k[3], k[4]))
+		end
+		return ColorSequence.new(keys)
+	elseif tag == "RAY" then
+		return Ray.new(Vector3.new(d[2], d[3], d[4]), Vector3.new(d[5], d[6], d[7]))
+	elseif tag == "R3" then
+		return Region3.new(Vector3.new(d[2], d[3], d[4]), Vector3.new(d[5], d[6], d[7]))
+	elseif tag == "V3I" then
+		return Vector3int16.new(d[2], d[3], d[4])
+	elseif tag == "V2I" then
+		return Vector2int16.new(d[2], d[3])
+	elseif tag == "UD" then
+		return UDim.new(d[2], d[3])
 	end
 	return d
 end
@@ -224,7 +272,20 @@ local function saveWS()
 			if s then table.insert(root, s) end
 		end
 	end
-	return http:JSONEncode(root)
+	local ok, json = pcall(http.JSONEncode, http, root)
+	if not ok then
+		warn("JSONEncode pizda.")
+		root = {}
+		for _, o in ipairs(workspace:GetChildren()) do
+			if not isOwned(o) and not o:IsA("Model") and not o:IsA("Folder") then
+				local s = serInst(o)
+				if s then table.insert(root, s) end
+			end
+		end
+		ok, json = pcall(http.JSONEncode, http, root)
+		if not ok then error("Serialize pizda") end
+	end
+	return json
 end
 
 local function loadWS(json)
