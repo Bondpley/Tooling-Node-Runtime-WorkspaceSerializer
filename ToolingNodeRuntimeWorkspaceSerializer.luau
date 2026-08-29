@@ -13,6 +13,8 @@ local plrs = game:GetService("Players")
 local tw = game:GetService("TweenService")
 local run = game:GetService("RunService")
 local uis = game:GetService("UserInputService")
+local StarterGui = game:GetService("StarterGui")
+
 
 local lp = plrs.LocalPlayer
 if not lp then return end
@@ -500,27 +502,28 @@ end
 			warn("Nothing to save!")
 			return false
 		end
-		if not writefile then
-			warn("writefile not available")
-			_G.TNR_clipboard = text
-			toast.Text = "writefile unavailable, data in _G.TNR_clipboard"
-			toast.TextTransparency = 0
-			task.delay(2, function() tween(toast, {TextTransparency = 1}, 0.3):Play() end)
-			return false
-		end
-		local success, err = pcall(function()
-			writefile("TNR_WorkspaceSerializer_"..game.GameId..".json", text)
-		end)
-		if success then
-			print("File saved to Desktop!")
-			return true
-		else
-			warn("Save failed: " .. tostring(err))
-			toast.Text = "Save failed: " .. tostring(err)
-			toast.TextTransparency = 0
-			task.delay(2, function() tween(toast, {TextTransparency = 1}, 0.3):Play() end)
-			return false
-		end
+		_G.TNR_clipboard = text
+		--if not writefile then
+		--	warn("writefile not available")
+		--	_G.TNR_clipboard = text
+		--	toast.Text = "writefile unavailable, data in _G.TNR_clipboard"
+		--	toast.TextTransparency = 0
+		--	task.delay(2, function() tween(toast, {TextTransparency = 1}, 0.3):Play() end)
+		--	return false
+		--end
+		--local success, err = pcall(function()
+		--	--writefile("TNR_WorkspaceSerializer_"..game.GameId..".json", text)
+		--end)
+		--if success then
+		--	print("File saved to Desktop!")
+		--	return true
+		--else
+		--	warn("Save failed: " .. tostring(err))
+		--	toast.Text = "Save failed: " .. tostring(err)
+		--	toast.TextTransparency = 0
+		--	task.delay(2, function() tween(toast, {TextTransparency = 1}, 0.3):Play() end)
+		--	return false
+		--end
 	end
 
 local tabChunks = tabBtn("Chunks", UDim2.new(0,6,0,3))
@@ -949,6 +952,15 @@ tween(frame, {Position = UDim2.new(0,20,0,40)}, 0.6, Enum.EasingStyle.Quint, Enu
 playSnd(lp.PlayerGui, SND_SUC)
 
 print("TNR.exe loaded.")
+
+	local notificationData = {
+		Title = "TNR.exe loaded!", 
+		Text = "Start the saving now)",
+		Duration = 5,
+		Icon = "rbxassetid://4748133184",
+	}
+
+	StarterGui:SetCore("SendNotification", notificationData)
 
 end
 
