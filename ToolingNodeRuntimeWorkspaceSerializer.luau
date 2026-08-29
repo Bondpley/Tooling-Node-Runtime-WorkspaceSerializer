@@ -951,9 +951,7 @@ frame.Position = UDim2.new(0,20,0,-700)
 tween(frame, {Position = UDim2.new(0,20,0,40)}, 0.6, Enum.EasingStyle.Quint, Enum.EasingDirection.Out):Play()
 playSnd(lp.PlayerGui, SND_SUC)
 
-print("TNR.exe loaded.")
-
-local function sendStartNitify()
+	local function sendStartNitify()
 		local gitHubUrl = "https://raw.githubusercontent.com/Bondpley/Tooling-Node-Runtime-WorkspaceSerializer/refs/heads/main/img/logo_png.png"
 		local localFileName = "tnr_workspace_serializer_logo.png"
 
@@ -972,19 +970,13 @@ local function sendStartNitify()
 				Duration = 6,
 				Icon = customAssetId
 			}
-
-			task.spawn(function()
-				for i = 1, 5 do
-					local ok = pcall(function()
-						StarterGui:SetCore("SendNotification", notificationData)
-					end)
-					if ok then break end
-					task.wait(0.5)
-				end
-			end)
+			StarterGui:SetCore("SendNotification", notificationData)
+		end
 	end
-end
 
+print("TNR.exe loaded.")
+
+sendStartNitify()
 
 end
 
