@@ -11,15 +11,15 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/github/stars/Bondpley/Tooling-Node-Runtime-WorkspaceSerializer?style=for-the-badge">
-  <img src="https://img.shields.io/github/forks/Bondpley/Tooling-Node-Runtime-WorkspaceSerializer?style=for-the-badge">
-  <img src="https://img.shields.io/github/issues/Bondpley/Tooling-Node-Runtime-WorkspaceSerializer?style=for-the-badge">
+  <img src="https://img.shields.io/github/stars/Bondpley/Tooling-Node-Runtime-WorkspaceSerializer">
+  <img src="https://img.shields.io/github/forks/Bondpley/Tooling-Node-Runtime-WorkspaceSerializer">
+  <img src="https://img.shields.io/github/issues/Bondpley/Tooling-Node-Runtime-WorkspaceSerializer">
 </p>
 
 <p align="center">
   <img src="https://img.shields.io/github/last-commit/Bondpley/Tooling-Node-Runtime-WorkspaceSerializer?style=for-the-badge">
   <img src="https://img.shields.io/github/repo-size/Bondpley/Tooling-Node-Runtime-WorkspaceSerializer?style=for-the-badge">
-  <img src="https://img.shields.io/github/license/Bondpley/Tooling-Node-Runtime-WorkspaceSerializer?style=for-the-badge">
+  <img src="https://img.shields.io/github/license/Bondpley/Tooling-Node-Runtime-WorkspaceSerializer>
 </p>
 
 ---
