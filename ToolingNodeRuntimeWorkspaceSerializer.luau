@@ -170,7 +170,8 @@ return(function(webhookUrl)
         "Selected", "Selectable", "SelectionImageObject", "ImageTransparency", "ImageColor3",
         "ScaleType", "SliceCenter", "TileSize", "ResampleMode", "ImageRectOffset", "ImageRectSize",
         "ImageContent", "ZIndex", "LayoutOrder", "ClipsDescendants", "FillDirection",
-        "HorizontalAlignment", "VerticalAlignment", "Padding", "SortOrder", "AutomaticSize"
+        "HorizontalAlignment", "VerticalAlignment", "Padding", "SortOrder", "AutomaticSize",
+        "MeshId", "TextureID", "VertexColor", "RenderFidelity", "CollisionFidelity", "GlobalWind"
     }
     
     local encodeCounter = 0
@@ -197,7 +198,127 @@ return(function(webhookUrl)
             end
         end
         
-        if instance:IsA("Instance") and instance:GetAttributes() ~= {} then
+        if instance:IsA("MeshPart") or instance:IsA("SpecialMesh") or instance:IsA("BlockMesh") or instance:IsA("CylinderMesh") then
+            if instance:IsA("MeshPart") then
+                local meshId = pcall(function() return instance.MeshId end) and instance.MeshId or ""
+                local textureId = pcall(function() return instance.TextureID end) and instance.TextureID or ""
+                if meshId ~= "" then
+                    data.Properties.MeshId = meshId
+                end
+                if textureId ~= "" then
+                    data.Properties.TextureID = textureId
+                end
+                local vertexColor = pcall(function() return instance.VertexColor end) and instance.VertexColor or nil
+                if vertexColor then
+                    data.Properties.VertexColor = encodeValue(vertexColor)
+                end
+            end
+        end
+        
+        if instance:IsA("Part") or instance:IsA("MeshPart") then
+            local materialVariant = pcall(function() return instance.MaterialVariant end) and instance.MaterialVariant or nil
+            if materialVariant then
+                data.Properties.MaterialVariant = encodeValue(materialVariant)
+            end
+        end
+        
+        if instance:IsA("Decal") or instance:IsA("Texture") then
+            local texture = pcall(function() return instance.Texture end) and instance.Texture or ""
+            if texture ~= "" then
+                data.Properties.Texture = texture
+            end
+            local face = pcall(function() return instance.Face end) and instance.Face or nil
+            if face then
+                data.Properties.Face = encodeValue(face)
+            end
+        end
+        
+        if instance:IsA("Sound") then
+            local soundId = pcall(function() return instance.SoundId end) and instance.SoundId or ""
+            if soundId ~= "" then
+                data.Properties.SoundId = soundId
+            end
+        end
+        
+        if instance:IsA("ImageLabel") or instance:IsA("ImageButton") then
+            local image = pcall(function() return instance.Image end) and instance.Image or ""
+            if image ~= "" then
+                data.Properties.Image = image
+            end
+            local imageColor3 = pcall(function() return instance.ImageColor3 end) and instance.ImageColor3 or nil
+            if imageColor3 then
+                data.Properties.ImageColor3 = encodeValue(imageColor3)
+            end
+        end
+        
+        if instance:IsA("Frame") or instance:IsA("TextLabel") or instance:IsA("TextButton") or instance:IsA("TextBox") then
+            local backgroundImage = pcall(function() return instance.BackgroundImage end) and instance.BackgroundImage or ""
+            if backgroundImage ~= "" then
+                data.Properties.BackgroundImage = backgroundImage
+            end
+            local backgroundImageColor3 = pcall(function() return instance.BackgroundImageColor3 end) and instance.BackgroundImageColor3 or nil
+            if backgroundImageColor3 then
+                data.Properties.BackgroundImageColor3 = encodeValue(backgroundImageColor3)
+            end
+        end
+        
+        if instance:IsA("Attachment") then
+            local orientation = pcall(function() return instance.Orientation end) and instance.Orientation or nil
+            if orientation then
+                data.Properties.Orientation = encodeValue(orientation)
+            end
+            local position = pcall(function() return instance.Position end) and instance.Position or nil
+            if position then
+                data.Properties.Position = encodeValue(position)
+            end
+        end
+        
+        if instance:IsA("Beam") or instance:IsA("Trail") then
+            local color = pcall(function() return instance.Color end) and instance.Color or nil
+            if color then
+                data.Properties.Color = encodeValue(color)
+            end
+            local texture = pcall(function() return instance.Texture end) and instance.Texture or ""
+            if texture ~= "" then
+                data.Properties.Texture = texture
+            end
+            local textureMode = pcall(function() return instance.TextureMode end) and instance.TextureMode or nil
+            if textureMode then
+                data.Properties.TextureMode = encodeValue(textureMode)
+            end
+        end
+        
+        if instance:IsA("BillboardGui") or instance:IsA("SurfaceGui") or instance:IsA("SelectionBox") then
+            local adornee = pcall(function() return instance.Adornee end) and instance.Adornee or nil
+            if adornee then
+                data.Properties.Adornee = encodeValue(adornee)
+            end
+        end
+        
+        if instance:IsA("BasePart") then
+            local color = pcall(function() return instance.Color end) and instance.Color or nil
+            if color then
+                data.Properties.Color = encodeValue(color)
+            end
+            local material = pcall(function() return instance.Material end) and instance.Material or nil
+            if material then
+                data.Properties.Material = encodeValue(material)
+            end
+            local transparency = pcall(function() return instance.Transparency end) and instance.Transparency or nil
+            if transparency then
+                data.Properties.Transparency = transparency
+            end
+            local reflectance = pcall(function() return instance.Reflectance end) and instance.Reflectance or nil
+            if reflectance then
+                data.Properties.Reflectance = reflectance
+            end
+            local size = pcall(function() return instance.Size end) and instance.Size or nil
+            if size then
+                data.Properties.Size = encodeValue(size)
+            end
+        end
+        
+        if instance:GetAttributes() and next(instance:GetAttributes()) then
             data.Attributes = {}
             for attributeName, attributeValue in pairs(instance:GetAttributes()) do
                 local encoded = encodeValue(attributeValue)
