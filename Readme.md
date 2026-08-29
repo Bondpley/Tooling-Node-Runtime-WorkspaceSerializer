@@ -6,9 +6,7 @@
 
 > [!IMPORTANT]
 > Independent, unofficial project. Not affiliated with, endorsed by, or officially connected to Roblox Corporation. "Luau" is a trademark of Roblox Corporation.
-<p align="center">
-  <img height="400px" style="margin: 0; padding: 0" src=".moonwave\static\logo.png" />
-</p>
+<!-- <p align="center"><img height="320px" style="margin: 0; padding: 0" src="img/logo.png" /></p> -->
 
 <p align="center">
   <img src="https://img.shields.io/badge/Roblox%20Studio-Plugin-black?style=for-the-badge&logo=roblox&logoColor=white">
