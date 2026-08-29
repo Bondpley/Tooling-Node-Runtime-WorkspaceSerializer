@@ -482,16 +482,16 @@ end
 	local function saveToFile()
 		local text = fullJson
 		if text == "" then
-			showToast("Nothing to save!")
+			warn("Nothing to save!")
 			return
 		end
 		local success, err = pcall(function()
-			writefile("C:\\Users\\" .. os.getenv("USERNAME") .. "\\Desktop\\workspace_backup.json", text)
+			writefile("TNR_WorkspaceSerializer_"..game.GameId..".json", text)
 		end)
 		if success then
-			showToast("File saved to Desktop!")
+			print("File saved to Desktop!")
 		else
-			showToast("Save failed: " .. tostring(err))
+			warn("Save failed: " .. tostring(err))
 		end
 	end
 
