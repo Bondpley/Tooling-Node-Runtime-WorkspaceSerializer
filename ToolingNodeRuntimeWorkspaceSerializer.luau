@@ -5,8 +5,8 @@
 --                              By Bond_pley                                --
 --==========================================================================--
 
-
-local WEBHOOK_URL = ""
+return function(webhookUrl)
+local WEBHOOK_URL = webhookUrl or ""
 
 local http = game:GetService("HttpService")
 local plrs = game:GetService("Players")
@@ -479,6 +479,22 @@ local function tabBtn(text, pos, size)
 	return b
 end
 
+	local function saveToFile()
+		local text = fullJson
+		if text == "" then
+			showToast("Nothing to save!")
+			return
+		end
+		local success, err = pcall(function()
+			writefile("C:\\Users\\" .. os.getenv("USERNAME") .. "\\Desktop\\workspace_backup.json", text)
+		end)
+		if success then
+			showToast("File saved to Desktop!")
+		else
+			showToast("Save failed: " .. tostring(err))
+		end
+	end
+
 local tabChunks = tabBtn("Chunks", UDim2.new(0,6,0,3))
 local tabFull = tabBtn("Full JSON", UDim2.new(0.5,6,0,3))
 
@@ -774,6 +790,7 @@ saveBtn.MouseButton1Click:Connect(function()
 
 		if fullTrunc then
 			fullBox.Text = json:sub(1, PREVIEW_MAX) .. "\n...[truncated, use Copy to get full JSON]"
+			saveToFile()
 		else
 			fullBox.Text = json
 		end
@@ -904,3 +921,6 @@ tween(frame, {Position = UDim2.new(0,20,0,40)}, 0.6, Enum.EasingStyle.Quint, Enu
 playSnd(lp.PlayerGui, SND_SUC)
 
 print("TNR.exe loaded.")
+
+end
+
