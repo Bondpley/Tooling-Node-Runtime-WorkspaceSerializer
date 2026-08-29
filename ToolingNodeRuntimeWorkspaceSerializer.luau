@@ -503,6 +503,9 @@ end
 		if not writefile then
 			warn("writefile not available")
 			_G.TNR_clipboard = text
+			toast.Text = "writefile unavailable, data in _G.TNR_clipboard"
+			toast.TextTransparency = 0
+			task.delay(2, function() tween(toast, {TextTransparency = 1}, 0.3):Play() end)
 			return false
 		end
 		local success, err = pcall(function()
@@ -513,6 +516,9 @@ end
 			return true
 		else
 			warn("Save failed: " .. tostring(err))
+			toast.Text = "Save failed: " .. tostring(err)
+			toast.TextTransparency = 0
+			task.delay(2, function() tween(toast, {TextTransparency = 1}, 0.3):Play() end)
 			return false
 		end
 	end
