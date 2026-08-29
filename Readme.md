@@ -29,7 +29,7 @@
 # Load the script
 
 ```lua
-local loadTNR = loadstring(game:HttpGet(Repo .. ".luau", true)()
+local loadTNR = loadstring(game:HttpGet("https://raw.githubusercontent.com/Bondpley/Tooling-Node-Runtime-WorkspaceSerializer/refs/heads/main/ToolingNodeRuntimeWorkspaceSerializer" .. ".luau", true)()
 ```
 
 <br></br>
