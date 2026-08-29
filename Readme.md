@@ -7,18 +7,6 @@
 > [!IMPORTANT]
 > Independent, unofficial project. Not affiliated with, endorsed by, or officially connected to Roblox Corporation. "Luau" is a trademark of Roblox Corporation.
 <!-- <p align="center"><img height="320px" style="margin: 0; padding: 0" src="img/logo.png" /></p> -->
-
-> [!IMPORTANT]
-> ## Disclaimer
-> This project is provided for development, testing, debugging, archival, educational, and research purposes.<br>
-
-> It is not intended to facilitate misuse, unauthorized access, abuse of third-party services, violation of platform rules, or unauthorized redistribution of content.<br>
-
-> Users are solely responsible for ensuring that their use of this software complies with all applicable laws, terms of service, licenses, and platform rules.<br>
-
-> The maintainers do not support, encourage, or condone any misuse of this software and are not responsible for how it is used by others.<br>
-
-
 <p align="center">
   <img src="https://img.shields.io/badge/Roblox%20Studio-Plugin-black?style=for-the-badge&logo=roblox&logoColor=white">
   <img src="https://img.shields.io/badge/Luau-2C2D72?style=for-the-badge">
@@ -36,6 +24,16 @@
   <img src="https://img.shields.io/github/repo-size/Bondpley/Tooling-Node-Runtime-WorkspaceSerializer?style=for-the-badge">
   <img src="https://img.shields.io/github/license/Bondpley/Tooling-Node-Runtime-WorkspaceSerializer>
 </p>
+
+> [!IMPORTANT]
+> ## Disclaimer
+> This project is provided for development, testing, debugging, archival, educational, and research purposes.<br>
+> It is not intended to facilitate misuse, unauthorized access, abuse of third-party services, violation of platform rules, or unauthorized redistribution of content.<br>
+> Users are solely responsible for ensuring that their use of this software complies with all applicable laws, terms of service, licenses, and platform rules.<br>
+> The maintainers do not support, encourage, or condone any misuse of this software and are not responsible for how it is used by others.<br>
+
+
+
 
 ---
 
