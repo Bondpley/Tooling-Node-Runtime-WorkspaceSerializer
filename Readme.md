@@ -8,6 +8,14 @@
 > Independent, unofficial project. Not affiliated with, endorsed by, or officially connected to Roblox Corporation. "Luau" is a trademark of Roblox Corporation.
 <!-- <p align="center"><img height="320px" style="margin: 0; padding: 0" src="img/logo.png" /></p> -->
 
+> [!IMPORTANT]
+> ## Disclaimer
+> This project is provided for development, testing, debugging, archival, educational, and research purposes.
+> It is not intended to facilitate misuse, unauthorized access, abuse of third-party services, violation of platform rules, or unauthorized redistribution of content.
+> Users are solely responsible for ensuring that their use of this software complies with all applicable laws, terms of service, licenses, and platform rules.
+> The maintainers do not support, encourage, or condone any misuse of this software and are not responsible for how it is used by others.
+
+
 <p align="center">
   <img src="https://img.shields.io/badge/Roblox%20Studio-Plugin-black?style=for-the-badge&logo=roblox&logoColor=white">
   <img src="https://img.shields.io/badge/Luau-2C2D72?style=for-the-badge">
@@ -845,4 +853,4 @@ See [`LICENSE`](LICENSE) for more information.
 
 For the GitHub README, I'd use the **Roblox Studio Explorer screenshot** near the “Roblox Studio” section because it visually explains *what the serializer is actually working with*: the Instance hierarchy. Roblox's own documentation describes Explorer as the hierarchical view of the objects/services in a place, with `Workspace` representing the 3D world. ([d2gbj0c64xar4a.cloudfront.net][1])
 
-[1]: https://d2gbj0c64xar4a.cloudfront.net/docs/studio/ui-overview?utm_source=chatgpt.com "Studio interface | Documentation - Roblox Creator Hub"
+[1]: https://d2gbj0c64xar4a.cloudfront.net/docs/studio/ui-overview "Studio interface | Documentation - Roblox Creator Hub"
