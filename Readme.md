@@ -325,7 +325,7 @@ Workspace
 
 That hierarchy is the foundation WorkspaceSerializer works with.
 
-![Roblox Studio Explorer](https://img.itch.zone/aW1nLzIwNjM3OTAzLnBuZw%3D%3D/original/1OXvkn.png)
+![Roblox Studio Explorer]([https://img.itch.zone/aW1nLzIwNjM3OTAzLnBuZw%3D%3D/original/1OXvkn.png](https://prod.docsiteassets.roblox.com/assets/studio/explorer/Parent-Child-Hierarchy.png.webp))
 
 ---
 
@@ -826,7 +826,6 @@ See [`LICENSE`](LICENSE) for more information.
   <br>
   <sub>WorkspaceSerializer • Roblox Studio</sub>
 </p>
-```
 
 For the GitHub README, I'd use the **Roblox Studio Explorer screenshot** near the “Roblox Studio” section because it visually explains *what the serializer is actually working with*: the Instance hierarchy. Roblox's own documentation describes Explorer as the hierarchical view of the objects/services in a place, with `Workspace` representing the 3D world. ([d2gbj0c64xar4a.cloudfront.net][1])
 
