@@ -1,6 +1,5 @@
 
 <h1 align="center">TNR - WorkspaceSerializer</h1>
-<p align="center"><img height="420px" style="margin: 0; padding: 0" src="img/logo_png.png" /></p>
 
 <p align="center">
   <b>A lightweight Roblox Studio serializer for saving, exporting, and restoring Instance hierarchies.</b>
@@ -22,6 +21,7 @@
   <img src="https://img.shields.io/github/last-commit/Bondpley/Tooling-Node-Runtime-WorkspaceSerializer?style=for-the-badge">
   <img src="https://img.shields.io/github/repo-size/Bondpley/Tooling-Node-Runtime-WorkspaceSerializer?style=for-the-badge">
 </p>
+<p align="center"><img height="420px" style="margin: 0; padding: 0" src="img/logo_png.png" /></p>
 
 > [!IMPORTANT]
 > Independent, unofficial project. Not affiliated with, endorsed by, or officially connected to Roblox Corporation. "Luau" is a trademark of Roblox Corporation.
