@@ -291,16 +291,23 @@ end
 local function loadWS(json)
 	local ok, data = pcall(function() return http:JSONDecode(json) end)
 	if not ok then error("invalid json") end
+
+	local oldGravity = workspace.Gravity
+	workspace.Gravity = 0
+
 	for _, o in ipairs(workspace:GetChildren()) do
 		if o ~= workspace.Terrain and not isOwned(o) then
 			o:Destroy()
 			task.wait()
 		end
 	end
+
 	desCnt = 0
 	for _, d in ipairs(data) do
 		creInst(d, workspace)
 	end
+
+	workspace.Gravity = oldGravity
 end
 
 local queue = {}
