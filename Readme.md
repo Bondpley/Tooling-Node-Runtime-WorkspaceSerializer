@@ -5,9 +5,24 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Roblox-Studio-red?style=for-the-badge&logo=roblox" alt="Roblox Studio">
-  <img src="https://img.shields.io/badge/Luau-Programming%20Language-blue?style=for-the-badge" alt="Luau">
-  <img src="https://img.shields.io/badge/Status-Development-orange?style=for-the-badge" alt="Status">
+  <img src="https://img.shields.io/badge/Roblox%20Studio-Plugin-000000?style=for-the-badge&logo=roblox&logoColor=white" alt="Roblox Studio">
+  <img src="https://img.shields.io/badge/Luau-Programming%20Language-2C2D72?style=for-the-badge" alt="Luau">
+  <img src="https://img.shields.io/github/license/Bondpley/Tooling-Node-Runtime-WorkspaceSerializer?style=for-the-badge" alt="License">
+  <img src="https://img.shields.io/github/stars/Bondpley/Tooling-Node-Runtime-WorkspaceSerializer?style=for-the-badge" alt="Stars">
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/github/forks/Bondpley/Tooling-Node-Runtime-WorkspaceSerializer?style=for-the-badge" alt="Forks">
+  <img src="https://img.shields.io/github/issues/Bondpley/Tooling-Node-Runtime-WorkspaceSerializer?style=for-the-badge" alt="Issues">
+  <img src="https://img.shields.io/github/commit-activity/m/Bondpley/Tooling-Node-Runtime-WorkspaceSerializer?style=for-the-badge" alt="Commit Activity">
+  <img src="https://img.shields.io/github/last-commit/Bondpley/Tooling-Node-Runtime-WorkspaceSerializer?style=for-the-badge" alt="Last Commit">
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/github/repo-size/Bondpley/Tooling-Node-Runtime-WorkspaceSerializer?style=for-the-badge" alt="Repo Size">
+  <img src="https://img.shields.io/github/languages/top/Bondpley/Tooling-Node-Runtime-WorkspaceSerializer?style=for-the-badge" alt="Top Language">
+  <img src="https://img.shields.io/github/languages/count/Bondpley/Tooling-Node-Runtime-WorkspaceSerializer?style=for-the-badge" alt="Languages">
+  <img src="https://img.shields.io/github/watchers/Bondpley/Tooling-Node-Runtime-WorkspaceSerializer?style=for-the-badge" alt="Watchers">
 </p>
 
 ---
