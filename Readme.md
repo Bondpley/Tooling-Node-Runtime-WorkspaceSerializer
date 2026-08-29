@@ -1,4 +1,3 @@
-````md
 # TNR — WorkspaceSerializer
 
 <p align="center">
@@ -19,7 +18,6 @@
 
 Instead of treating a Workspace as a collection of individual objects, WorkspaceSerializer treats it as a **tree**:
 
-```text
 Workspace
 │
 ├── Map
@@ -34,7 +32,6 @@ Workspace
 │
 ├── SpawnLocation
 └── Environment
-````
 
 The serializer walks through this hierarchy, reads supported properties, converts Roblox-specific datatypes into a portable representation, and stores the result as ordinary Lua data.
 
