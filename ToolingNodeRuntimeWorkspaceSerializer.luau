@@ -19,7 +19,7 @@ if not lp then return end
 
 local MAX_CHUNK = 180000
 local AUTO_SAVE = 300
-local YIELD_EVERY = 50
+local YIELD_EVERY = 9999
 local PREVIEW_MAX = 100000
 
 local BG = Color3.new(0, 0, 0)
