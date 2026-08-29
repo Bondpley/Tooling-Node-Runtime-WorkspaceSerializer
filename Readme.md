@@ -20,7 +20,6 @@
 <p align="center">
   <img src="https://img.shields.io/github/last-commit/Bondpley/Tooling-Node-Runtime-WorkspaceSerializer?style=for-the-badge">
   <img src="https://img.shields.io/github/repo-size/Bondpley/Tooling-Node-Runtime-WorkspaceSerializer?style=for-the-badge">
-  <img src="https://img.shields.io/github/license/Bondpley/Tooling-Node-Runtime-WorkspaceSerializer">
 </p>
 
 > [!IMPORTANT]
