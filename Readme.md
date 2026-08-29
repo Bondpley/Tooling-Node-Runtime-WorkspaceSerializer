@@ -11,8 +11,11 @@
 > [!IMPORTANT]
 > ## Disclaimer
 > This project is provided for development, testing, debugging, archival, educational, and research purposes.<br>
+
 > It is not intended to facilitate misuse, unauthorized access, abuse of third-party services, violation of platform rules, or unauthorized redistribution of content.<br>
+
 > Users are solely responsible for ensuring that their use of this software complies with all applicable laws, terms of service, licenses, and platform rules.<br>
+
 > The maintainers do not support, encourage, or condone any misuse of this software and are not responsible for how it is used by others.<br>
 
 
