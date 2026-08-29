@@ -26,6 +26,12 @@
 > [!IMPORTANT]
 > Independent, unofficial project. Not affiliated with, endorsed by, or officially connected to Roblox Corporation. "Luau" is a trademark of Roblox Corporation.
 
+> # Load the script
+
+```lua
+local loadTNR = loadstring(game:HttpGet(Repo .. ".luau", true)()
+```
+
 
 > [!IMPORTANT]
 > ## Disclaimer
