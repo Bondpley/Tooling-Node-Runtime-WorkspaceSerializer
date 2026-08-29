@@ -44,7 +44,7 @@
 **WorkspaceSerializer** is a Roblox Studio utility designed to serialize `Instance` hierarchies into structured data and reconstruct them later.
 
 Instead of treating a Workspace as a collection of individual objects, WorkspaceSerializer treats it as a **tree**:
-
+```
 Workspace
 │
 ├── Map
@@ -59,7 +59,7 @@ Workspace
 │
 ├── SpawnLocation
 └── Environment
-
+```
 The serializer walks through this hierarchy, reads supported properties, converts Roblox-specific datatypes into a portable representation, and stores the result as ordinary Lua data.
 
 The same data can then be passed through the deserializer to rebuild the hierarchy.
