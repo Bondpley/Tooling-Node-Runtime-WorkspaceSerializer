@@ -1,4 +1,5 @@
-# TNR — WorkspaceSerializer
+
+<h1 align="center">TNR - WorkspaceSerializer</h1>
 
 <p align="center">
   <b>A lightweight Roblox Studio serializer for saving, exporting, and restoring Instance hierarchies.</b>
@@ -224,7 +225,7 @@ WorkspaceSerializer includes explicit serialization support for several Roblox d
 | `EnumItem`           | `EN`     | Enum type + name       |
 | `Rect`               | `RECT`   | Min + Max              |
 | `PhysicalProperties` | `PP`     | Physical parameters    |
-| `Instance`           | —        | Instance reference     |
+| `Instance`           | -        | Instance reference     |
 | Scripts              | `SCRIPT` | Script placeholder     |
 
 ---
@@ -849,7 +850,7 @@ See [`LICENSE`](LICENSE) for more information.
 ---
 
 <p align="center">
-  <sub>TNR — Tooling & Node Runtime</sub>
+  <sub>TNR - Tooling & Node Runtime</sub>
   <br>
   <sub>WorkspaceSerializer • Roblox Studio</sub>
 </p>
