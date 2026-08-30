@@ -9,7 +9,7 @@
 return {
     "CFrame", "Position", "Orientation", "Size", "Transparency", "Color", "BrickColor", "Material",
     "Anchored", "CanCollide", "Shape", "Value", "Text", "Image", "BackgroundColor3",
-    "BackgroundTransparency", "TextColor3", "Reflectance", "Texture", "MeshId", "TextureID",
+    "BackgroundTransparency", "TextColor3", "Reflectance", "Texture", "MeshId", "TextureId",
     "Scale", "Offset", "VertexColor", "MeshType", "Locked", "CastShadow", "CanQuery", "CanTouch",
     "MaxForce", "MaxTorque", "Velocity", "RotVelocity", "Massless", "CustomPhysicalProperties",
     "Density", "Friction", "Elasticity", "FrictionWeight", "ElasticityWeight", "SoundId", "Volume",
@@ -24,5 +24,5 @@ return {
     "ScaleType", "SliceCenter", "TileSize", "ResampleMode", "ImageRectOffset", "ImageRectSize",        
     "ImageContent", "ZIndex", "LayoutOrder", "ClipsDescendants", "FillDirection",
     "HorizontalAlignment", "VerticalAlignment", "Padding", "SortOrder", "AutomaticSize",
-    "MeshId", "TextureID", "VertexColor", "RenderFidelity", "CollisionFidelity", "GlobalWind"
+    "MeshId", "TextureId", "VertexColor", "RenderFidelity", "CollisionFidelity", "GlobalWind"
 }
