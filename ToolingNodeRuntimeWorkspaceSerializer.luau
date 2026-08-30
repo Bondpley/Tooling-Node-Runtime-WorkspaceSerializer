@@ -69,20 +69,29 @@ return(function(webhookUrl, mcs, yieldsc, ccolor, pcps)
         
         if instance:IsA("MeshPart") or instance:IsA("SpecialMesh") or instance:IsA("BlockMesh") or instance:IsA("CylinderMesh") then
             if instance:IsA("MeshPart") then
-                local meshId = pcall(function() return instance.MeshId end) and instance.MeshId or ""
-                local textureId = pcall(function() return instance.TextureID end) and instance.TextureID or ""
-                if meshId ~= "" then
-                    data.Properties.MeshId = meshId
-                end
-                if textureId ~= "" then
-                    data.Properties.TextureID = textureId
-                end
-                local vertexColor = pcall(function() return instance.VertexColor end) and instance.VertexColor or nil
-                if vertexColor then
-                    data.Properties.VertexColor = encodeValue(vertexColor)
-                end
+    local meshId = pcall(function() return instance.MeshId end) and instance.MeshId or ""
+    local textureId = pcall(function() return instance.TextureID end) and instance.TextureID or ""
+    if meshId ~= "" then
+        data.Properties.MeshId = meshId
+    end
+    if textureId ~= "" then
+        data.Properties.TextureID = textureId
+    end
+    local vertexColor = pcall(function() return instance.VertexColor end) and instance.VertexColor or nil
+    if vertexColor then
+        data.Properties.VertexColor = encodeValue(vertexColor)
+    end
 
-                local initialSize = pcall(function() return instance.InitialSize end) and instance.InitialSize or nil
+    local initialSize = nil
+    local okDirect, valDirect = pcall(function() return instance.InitialSize end)
+    if okDirect and valDirect then
+        initialSize = valDirect
+        elseif gethiddenproperty then
+                local okHidden, valHidden = pcall(gethiddenproperty, instance, "InitialSize")
+                if okHidden and valHidden then
+                    initialSize = valHidden
+                end
+                end
                 if initialSize then
                     data.Properties.InitialSize = encodeValue(initialSize)
                 end
