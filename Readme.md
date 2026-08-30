@@ -58,6 +58,5 @@ See [`LICENSE`](LICENSE) for more information.
   <sub>WorkspaceSerializer • Roblox Studio</sub>
 </p>
 
-For the GitHub README, I'd use the **Roblox Studio Explorer screenshot** near the “Roblox Studio” section because it visually explains *what the serializer is actually working with*: the Instance hierarchy. Roblox's own documentation describes Explorer as the hierarchical view of the objects/services in a place, with `Workspace` representing the 3D world. ([d2gbj0c64xar4a.cloudfront.net][1])
 
 [1]: https://d2gbj0c64xar4a.cloudfront.net/docs/studio/ui-overview "Studio interface | Documentation - Roblox Creator Hub"
