@@ -81,6 +81,11 @@ return(function(webhookUrl, mcs, yieldsc, ccolor, pcps)
                 if vertexColor then
                     data.Properties.VertexColor = encodeValue(vertexColor)
                 end
+
+                local initialSize = pcall(function() return instance.InitialSize end) and instance.InitialSize or nil
+                if initialSize then
+                    data.Properties.InitialSize = encodeValue(initialSize)
+                end
             end
         end
         
