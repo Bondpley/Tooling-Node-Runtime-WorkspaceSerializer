@@ -6,13 +6,14 @@
 --                                  v.1.3                                   --
 --==========================================================================--
 
-return(function(webhookUrl, mcs, yieldsc, ccolor)
+return(function(webhookUrl, mcs, yieldsc, ccolor, pcps)
     local httpService = game:GetService("HttpService")
     local playersService = game:GetService("Players")
     local tweenService = game:GetService("TweenService")
     local runService = game:GetService("RunService")
     local inputService = game:GetService("UserInputService")
     local localPlayer = playersService.LocalPlayer
+    local pcamera = workspace.CurrentCamera
     if not localPlayer then return end
     local ValueCodec = loadstring(game:HttpGet(
         "https://raw.githubusercontent.com/Bondpley/Tooling-Node-Runtime-WorkspaceSerializer/refs/heads/main/Utils/ValueCodec.luau"
@@ -249,6 +250,11 @@ return(function(webhookUrl, mcs, yieldsc, ccolor)
     end
     
     local function saveWorkspace()
+
+        if pcps == nil or pcps == true then
+            pcamera.CameraType = Enum.CameraType.Scriptable
+        end
+
         local root = {}
         for _, object in ipairs(workspace:GetChildren()) do
             local encoded = encodeInstance(object)
