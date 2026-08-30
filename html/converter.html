@@ -880,24 +880,25 @@ function buildInstance(inst, parentRef, out, includeMeshes) {
     var ref = 'RBX' + (refCounter++);
 
     if (includeMeshes) {
-        if (props.MeshId && !(props.MeshType && Array.isArray(props.MeshType) && props.MeshType[0] === 'EN' && props.MeshType[1] === 'MeshType' && props.MeshType[2] === 'FileMesh')) {
-            props.MeshType = ['EN', 'MeshType', 'FileMesh'];
-        } else if (props.MeshId && props.MeshType && Array.isArray(props.MeshType) && props.MeshType[0] === 'EN' && props.MeshType[1] === 'MeshType' && props.MeshType[2] !== 'FileMesh') {
-            props.MeshType = ['EN', 'MeshType', 'FileMesh'];
+        if (className === 'MeshPart' && props.MeshId) {
+            var sz = null;
+            if (props.Size && Array.isArray(props.Size) && props.Size[0] === 'V3') {
+                sz = props.Size.slice();
+            } else if (props.size && Array.isArray(props.size) && props.size[0] === 'V3') {
+                sz = props.size.slice();
+                delete props.size;
+            } else {
+                sz = ['V3', 1, 1, 1];
+            }
+            props.Size = sz.slice();
+            props.InitialSize = sz.slice();
         }
-    }
-
-    if (includeMeshes && className === 'MeshPart' && props.MeshId) {
-        var sz = null;
-        if (props.Size && Array.isArray(props.Size) && props.Size[0] === 'V3') {
-            sz = props.Size.slice();
-        } else if (props.size && Array.isArray(props.size) && props.size[0] === 'V3') {
-            sz = props.size.slice();
-        } else {
-            sz = ['V3', 1, 1, 1];
+        if (className === 'SpecialMesh' && props.MeshId) {
+            var isFileMesh = props.MeshType && Array.isArray(props.MeshType) && props.MeshType[0] === 'EN' && props.MeshType[1] === 'MeshType' && props.MeshType[2] === 'FileMesh';
+            if (!isFileMesh) {
+                props.MeshType = ['EN', 'MeshType', 'FileMesh'];
+            }
         }
-        props.size = sz.slice();
-        props.InitialSize = sz.slice();
     }
 
     out.push('\\t<Item class="' + esc(className) + '" referent="' + ref + '">');
