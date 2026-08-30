@@ -3,6 +3,7 @@
 ------------------------------------------------------------------------------
 --   https://github.com/Bondpley/Tooling-Node-Runtime-WorkspaceSerializer   --
 --                               By Bondpley                                --
+--                                  v.1.2                                   --
 --==========================================================================--
 
 local ValueCodec = {}
