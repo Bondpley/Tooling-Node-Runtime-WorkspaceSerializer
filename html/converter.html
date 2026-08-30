@@ -257,33 +257,6 @@
             background: #221111;
         }
 
-        .actions button.mesh-toggle {
-            min-width: 100px;
-            flex: 0 1 auto;
-        }
-
-        .actions button.mesh-toggle.on {
-            border-color: #3a6a3a;
-            background: #1a2a1a;
-            color: #8bc34a;
-        }
-
-        .actions button.mesh-toggle.off {
-            border-color: #6a3a3a;
-            background: #2a1a1a;
-            color: #e88484;
-        }
-
-        .actions button.mesh-toggle:hover:not(:disabled).on {
-            background: #223a22;
-            border-color: #4a8a4a;
-        }
-
-        .actions button.mesh-toggle:hover:not(:disabled).off {
-            background: #3a2222;
-            border-color: #8a4a4a;
-        }
-
         .status {
             background: #0d0d0d;
             border-left: 3px solid #2a2a2a;
@@ -396,10 +369,6 @@
                 font-size: 12px;
             }
 
-            .actions button.mesh-toggle {
-                min-width: 80px;
-            }
-
             textarea {
                 height: 130px;
                 font-size: 12px;
@@ -480,10 +449,6 @@
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                 <span data-key="convertBtn">Convert & Download</span>
             </button>
-            <button id="meshToggle" class="mesh-toggle on">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
-                <span>Meshes: ON</span>
-            </button>
             <button id="previewBtn">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                 <span data-key="previewBtn">Preview XML</span>
@@ -515,11 +480,9 @@
             var clearBtn = document.getElementById('clearBtn');
             var xmlPreview = document.getElementById('xmlPreview');
             var langToggle = document.getElementById('langToggle');
-            var meshToggle = document.getElementById('meshToggle');
 
             var lastResult = null;
             var activeLang = 'en';
-            var includeMeshes = true;
 
             var strings = {
                 en: {
@@ -613,22 +576,6 @@
                 }
             }
 
-            function updateMeshToggle() {
-                var span = meshToggle.querySelector('span');
-                if (includeMeshes) {
-                    meshToggle.className = 'mesh-toggle on';
-                    span.textContent = 'Meshes: ON';
-                } else {
-                    meshToggle.className = 'mesh-toggle off';
-                    span.textContent = 'Meshes: OFF';
-                }
-            }
-
-            meshToggle.addEventListener('click', function() {
-                includeMeshes = !includeMeshes;
-                updateMeshToggle();
-            });
-
             langToggle.addEventListener('click', function(e) {
                 var btn = e.target.closest('button');
                 if (!btn) return;
@@ -721,7 +668,7 @@ const ENUM_TABLES = {
 };
 
 function esc(s) {
-    s = String(s).replace(/[\\\\u0000-\\\\u0008\\\\u000B\\\\u000C\\\\u000E-\\\\u001F\\\\uFFFE\\\\uFFFF]/g, '');
+    s = String(s).replace(/[\\u0000-\\u0008\\u000B\\u000C\\u000E-\\u001F\\uFFFE\\uFFFF]/g, '');
     return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
 }
 
@@ -733,23 +680,13 @@ function safeNum(n) {
 }
 
 var skipped = [];
+var contentProps = ['MeshId','TextureId','TextureID','SoundId','FaceId','Image','Decal','Object','Source','StringValue'];
 
-function isMeshProp(name) {
-    return name === 'MeshId' || name === 'TextureId' || name === 'TextureID';
-}
-
-function isMeshTypeFileMesh(val) {
-    return Array.isArray(val) && val[0] === 'EN' && val[1] === 'MeshType' && val[2] === 'FileMesh';
-}
-
-function serializeProperty(name, value, out, includeMeshes) {
+function serializeProperty(name, value, out) {
     if (value === null || value === undefined) return;
-    if (!includeMeshes && isMeshProp(name)) return;
-    if (!includeMeshes && isMeshTypeFileMesh(value)) return;
     var n = esc(name);
     if (typeof value === 'string') {
-        var isContent = ['MeshId','TextureId','TextureID','SoundId','FaceId','Image','Decal','Object','Source','StringValue'].indexOf(name) !== -1;
-        if (isContent && includeMeshes) {
+        if (contentProps.includes(name)) {
             var cv = '';
             if (value === '' || value === null || value === undefined) {
                 cv = '<null></null>';
@@ -867,7 +804,7 @@ function serializeProperty(name, value, out, includeMeshes) {
 var refCounter = 0;
 var terrainSkipped = 0;
 
-function buildInstance(inst, parentRef, out, includeMeshes) {
+function buildInstance(inst, parentRef, out) {
     var className = inst.Class || 'Folder';
     if (className === 'Terrain') {
         terrainSkipped++;
@@ -879,46 +816,39 @@ function buildInstance(inst, parentRef, out, includeMeshes) {
     var attrs = inst.Attributes || {};
     var ref = 'RBX' + (refCounter++);
 
-    if (includeMeshes) {
-        if (className === 'MeshPart' && props.MeshId) {
-            var sz = null;
-            if (props.Size && Array.isArray(props.Size) && props.Size[0] === 'V3') {
-                sz = props.Size.slice();
-            } else if (props.size && Array.isArray(props.size) && props.size[0] === 'V3') {
-                sz = props.size.slice();
-                delete props.size;
-            } else {
-                sz = ['V3', 1, 1, 1];
-            }
-            props.Size = sz.slice();
-            props.InitialSize = sz.slice();
+    if (props.MeshId && !(props.MeshType && Array.isArray(props.MeshType) && props.MeshType[0] === 'EN' && props.MeshType[1] === 'MeshType' && props.MeshType[2] === 'FileMesh')) {
+        props.MeshType = ['EN', 'MeshType', 'FileMesh'];
+    } else if (props.MeshId && props.MeshType && Array.isArray(props.MeshType) && props.MeshType[0] === 'EN' && props.MeshType[1] === 'MeshType' && props.MeshType[2] !== 'FileMesh') {
+        props.MeshType = ['EN', 'MeshType', 'FileMesh'];
+    }
+
+    if (className === 'MeshPart' && props.MeshId) {
+        var sz = null;
+        if (props.Size && Array.isArray(props.Size) && props.Size[0] === 'V3') {
+            sz = props.Size.slice();
+        } else if (props.size && Array.isArray(props.size) && props.size[0] === 'V3') {
+            sz = props.size.slice();
+        } else {
+            sz = ['V3', 1, 1, 1];
         }
-        if (className === 'SpecialMesh' && props.MeshId) {
-            var isFileMesh = props.MeshType && Array.isArray(props.MeshType) && props.MeshType[0] === 'EN' && props.MeshType[1] === 'MeshType' && props.MeshType[2] === 'FileMesh';
-            if (!isFileMesh) {
-                props.MeshType = ['EN', 'MeshType', 'FileMesh'];
-            }
-        }
+        props.size = sz.slice();
+        props.InitialSize = sz.slice();
     }
 
     out.push('\\t<Item class="' + esc(className) + '" referent="' + ref + '">');
     out.push('\\t\\t<Properties>');
     out.push('\\t\\t\\t<string name="Name">' + esc(name) + '</string>');
 
-    var propKeys = Object.keys(props);
-    for (var ki = 0; ki < propKeys.length; ki++) {
-        var k = propKeys[ki];
+    for (var k in props) {
         var line = [];
-        serializeProperty(k, props[k], line, includeMeshes);
+        serializeProperty(k, props[k], line);
         if (line.length) {
             out.push('\\t\\t\\t' + line.join('').trim());
         }
     }
-    var attrKeys = Object.keys(attrs);
-    for (var ai = 0; ai < attrKeys.length; ai++) {
-        var ak = attrKeys[ai];
+    for (var ak in attrs) {
         var al = [];
-        serializeProperty(ak, attrs[ak], al, includeMeshes);
+        serializeProperty(ak, attrs[ak], al);
         if (al.length) {
             out.push('\\t\\t\\t' + al.join('').trim());
         }
@@ -927,18 +857,16 @@ function buildInstance(inst, parentRef, out, includeMeshes) {
     out.push('\\t\\t</Properties>');
 
     for (var ci = 0; ci < children.length; ci++) {
-        buildInstance(children[ci], ref, out, includeMeshes);
+        buildInstance(children[ci], ref, out);
     }
     out.push('\\t</Item>');
 }
 
 self.onmessage = function(e) {
     try {
-        var data = e.data;
-        var text = data.json;
-        var includeMeshes = data.includeMeshes !== undefined ? data.includeMeshes : true;
-        var parsed = JSON.parse(text);
-        if (!Array.isArray(parsed)) throw new Error('JSON must be an array of objects.');
+        var text = e.data;
+        var data = JSON.parse(text);
+        if (!Array.isArray(data)) throw new Error('JSON must be an array of objects.');
         var out = [];
         out.push('<?xml version="1.0" encoding="UTF-8"?>');
         out.push('<roblox xmlns:xmime="http://www.w3.org/2005/05/xmlmime" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.roblox.com/roblox.xsd" version="4">');
@@ -950,9 +878,9 @@ self.onmessage = function(e) {
         out.push('\\t\\t<Properties>');
         out.push('\\t\\t\\t<string name="Name">WorkspaceMap</string>');
         out.push('\\t\\t</Properties>');
-        for (var i = 0; i < parsed.length; i++) {
-            buildInstance(parsed[i], rootRef, out, includeMeshes);
-            if (i % 2000 === 0) self.postMessage({progress: Math.round((i / parsed.length) * 100)});
+        for (var i = 0; i < data.length; i++) {
+            buildInstance(data[i], rootRef, out);
+            if (i % 2000 === 0) self.postMessage({progress: Math.round((i / data.length) * 100)});
         }
         out.push('\\t</Item>');
         out.push('\\t<SharedStrings>');
@@ -962,7 +890,7 @@ self.onmessage = function(e) {
             done: true,
             chunks: out,
             skipped: skipped,
-            count: parsed.length,
+            count: data.length,
             terrainSkipped: terrainSkipped
         });
     } catch (err) {
@@ -1035,7 +963,7 @@ self.onmessage = function(e) {
                     previewBtn.disabled = false;
                     worker = null;
                 };
-                worker.postMessage({ json: text, includeMeshes: includeMeshes });
+                worker.postMessage(text);
             }
 
             function handleConvert(showPreview) {
@@ -1065,7 +993,6 @@ self.onmessage = function(e) {
 
             setStatus(t('statusReady'), '');
             updateLang();
-            updateMeshToggle();
         })();
     </script>
 </body>
