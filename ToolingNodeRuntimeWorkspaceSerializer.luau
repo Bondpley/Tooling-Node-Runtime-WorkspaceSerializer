@@ -6,7 +6,7 @@
 --                                  v.1.3                                   --
 --==========================================================================--
 
-return(function(webhookUrl)
+return(function(webhookUrl, mcs, yieldsc, ccolor)
     local httpService = game:GetService("HttpService")
     local playersService = game:GetService("Players")
     local tweenService = game:GetService("TweenService")
@@ -18,9 +18,9 @@ return(function(webhookUrl)
         "https://raw.githubusercontent.com/Bondpley/Tooling-Node-Runtime-WorkspaceSerializer/refs/heads/main/Utils/ValueCodec.luau"
     ))()
     
-    local maxChunkSize = 180000
+    local maxChunkSize = if msc ~= nil and msc <= 180000 then msc else 180000
     local autoSaveInterval = 300
-    local yieldEvery = 9999
+    local yieldEvery = if yieldsc ~= nil and yieldsc > 100 then msc else 9999
     local previewMax = 100000
     
     local function sanitizeNumber(value)
@@ -558,8 +558,12 @@ return(function(webhookUrl)
         end)
         return button
     end
+    if ccolor ~= nil then
+        local saveButton = createActionButton("", UDim2.new(0, 0, 0, 0), UDim2.new(0.25, -6, 1, 0), ccolor)
+    else 
+        local saveButton = createActionButton("", UDim2.new(0, 0, 0, 0), UDim2.new(0.25, -6, 1, 0))
+    end
     
-    local saveButton = createActionButton("", UDim2.new(0, 0, 0, 0), UDim2.new(0.25, -6, 1, 0))
     local loadChunksButton = createActionButton("", UDim2.new(0.25, 6, 0, 0), UDim2.new(0.25, -6, 1, 0))
     local loadFullButton = createActionButton("", UDim2.new(0.5, 6, 0, 0), UDim2.new(0.25, -6, 1, 0))
     local copyButton = createActionButton("", UDim2.new(0.75, 6, 0, 0), UDim2.new(0.25, -6, 1, 0), Color3.fromRGB(180, 180, 180))
