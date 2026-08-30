@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tooling & Node Runtime WorkspaceSerializer</title>
+  <link rel="icon" href="favicon.png">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #0d1117;
+      color: #c9d1d9;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .navbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 2rem;
+      border-bottom: 1px solid #30363d;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .navbar .brand {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #f0f6fc;
+      letter-spacing: -0.3px;
+      white-space: nowrap;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .nav-links a {
+      color: #8b949e;
+      text-decoration: none;
+      font-size: 0.95rem;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover {
+      color: #58a6ff;
+    }
+
+    .search-badge {
+      background: #21262d;
+      padding: 0.2rem 0.8rem;
+      border-radius: 6px;
+      border: 1px solid #30363d;
+      color: #8b949e;
+      font-size: 0.85rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .search-badge span {
+      opacity: 0.5;
+    }
+
+    .main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 2rem;
+    }
+
+    .container {
+      max-width: 780px;
+      width: 100%;
+    }
+
+    .hero {
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+
+    .hero h1 {
+      font-size: 2.8rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      color: #f0f6fc;
+      margin-bottom: 0.75rem;
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      color: #8b949e;
+      margin-bottom: 2rem;
+      line-height: 1.6;
+    }
+
+    .hero .btn {
+      display: inline-block;
+      background: #238636;
+      color: #fff;
+      padding: 0.75rem 2rem;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 1.05rem;
+      text-decoration: none;
+      transition: background 0.2s;
+      border: 1px solid #2ea043;
+    }
+
+    .hero .btn:hover {
+      background: #2ea043;
+    }
+
+    .hero .btn2 {
+      display: inline-block;
+      background: #4b2b78;
+      color: #fff;
+      padding: 0.75rem 2rem;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 1.05rem;
+      text-decoration: none;
+      transition: background 0.2s;
+      border: 1px solid #976fd0;
+    }
+
+    .hero .btn2:hover {
+      background: #8c5b9b;
+    }
+
+    .disclaimer {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-left: 4px solid #d29922;
+      border-radius: 8px;
+      padding: 1.5rem 2rem;
+      text-align: left;
+      margin-top: 0.5rem;
+    }
+
+    .disclaimer h2 {
+      color: #f0883e;
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 0.15rem;
+    }
+
+    .disclaimer h3 {
+      color: #f0f6fc;
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+    }
+
+    .disclaimer p {
+      color: #8b949e;
+      font-size: 0.95rem;
+      line-height: 1.7;
+      margin: 0;
+    }
+
+    .footer {
+      border-top: 1px solid #30363d;
+      padding: 1.5rem 2rem;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      font-size: 0.9rem;
+      color: #484f58;
+    }
+
+    .footer a {
+      color: #58a6ff;
+      text-decoration: none;
+    }
+
+    .footer a:hover {
+      text-decoration: underline;
+    }
+
+    .footer .built-with {
+      color: #8b949e;
+    }
+
+    @media (max-width: 600px) {
+      .navbar {
+        flex-direction: column;
+        align-items: stretch;
+        text-align: center;
+      }
+      .nav-left {
+        justify-content: center;
+      }
+      .nav-links {
+        justify-content: center;
+      }
+      .hero h1 {
+        font-size: 2.2rem;
+      }
+      .hero p {
+        font-size: 1rem;
+      }
+      .footer {
+        flex-direction: column;
+        text-align: center;
+      }
+      .disclaimer {
+        padding: 1.25rem;
+      }
+      .disclaimer h2 {
+        font-size: 1.2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <a href="index.html">
+    <div class="nav-left">
+      <img src="favicon.png" alt="logo" width="44" height="44" />
+      <span class="brand">Tooling & Node Runtime WorkspaceSerializer</span>
+    </div></a>
+    <div class="nav-links">
+      <a href="docs.html">Docs</a>
+      <a href="#">Discord Support</a>
+      <a href="converter.html">Converter</a>
+      <span class="search-badge">
+        <span>🔍</span> Search
+      </span>
+    </div>
+  </nav>
+
+  <main class="main">
+    <div class="container">
+      <div class="hero">
+        <h1>Tooling & Node Runtime WorkspaceSerializer</h1>
+        <p>A lightweight Roblox Studio serializer for saving, exporting, and restoring Instance hierarchies.</p>
+        <a href="docs.html" class="btn">Get Started →</a>
+      </div>
+
+      <div class="disclaimer">
+        <h2>⚠️ Important</h2>
+        <h3>Disclaimer</h3>
+        <p>
+          This project is provided for development, testing, debugging, archival, educational, and research purposes.
+          It is not intended to facilitate misuse, unauthorized access, abuse of third-party services, violation of platform rules, or unauthorized redistribution of content.
+          Users are solely responsible for ensuring that their use of this software complies with all applicable laws, terms of service, licenses, and platform rules.
+          The maintainers do not support, encourage, or condone any misuse of this software and are not responsible for how it is used by others.
+        </p>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div>Copyright © 2026 <a href="https://github.com/Bondpley">Bondpley</a>.</div>
+    <div class="built-with">
+      Project <a href="https://github.com/Bondpley/Tooling-Node-Runtime-WorkspaceSerialize">Github</a>
+    </div>
+  </footer>
+
+</body>
+</html>

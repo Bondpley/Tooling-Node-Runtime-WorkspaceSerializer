@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="favicon.png">
+    <title>Converter · Tooling & Node Runtime WorkspaceSerializer</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: #0a0a0a;
+            color: #e0e0e0;
+            font-family: -apple-system, 'Segoe UI', Roboto, sans-serif;
+            display: flex;
+            justify-content: center;
+            padding: 24px;
+            min-height: 100vh;
+            line-height: 1.5;
+        }
+
+        .wrap {
+            max-width: 960px;
+            width: 100%;
+            background: #111;
+            padding: 28px 30px 32px;
+            border-radius: 12px;
+            border: 1px solid #2a2a2a;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9);
+        }
+
+        .head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #282828;
+            padding-bottom: 14px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .head h1 {
+            font-size: 20px;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .head h1 svg {
+            flex-shrink: 0;
+        }
+
+        .head h2 {
+            font-size: 15px;
+            font-weight: 400;
+            color: #aaa;
+            letter-spacing: 0.2px;
+        }
+
+        .lang {
+            display: flex;
+            gap: 4px;
+            background: #1a1a1a;
+            border-radius: 6px;
+            padding: 3px;
+            border: 1px solid #2a2a2a;
+        }
+
+        .lang button {
+            background: transparent;
+            border: none;
+            color: #666;
+            padding: 5px 14px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .lang button.active {
+            background: #2a2a2a;
+            color: #fff;
+        }
+
+        .lang button:hover:not(.active) {
+            color: #aaa;
+        }
+
+        .links-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 20px;
+            padding: 6px 0;
+            border-bottom: 1px solid #1e1e1e;
+        }
+
+        .links-row a {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            color: #888;
+            text-decoration: none;
+            transition: 0.2s;
+            background: #161616;
+            border: 1px solid #242424;
+        }
+
+        .links-row a:hover {
+            color: #ddd;
+            background: #222;
+            border-color: #3a3a3a;
+        }
+
+        .links-row a svg {
+            flex-shrink: 0;
+            opacity: 0.6;
+            transition: 0.2s;
+        }
+
+        .links-row a:hover svg {
+            opacity: 1;
+        }
+
+        .field {
+            margin-bottom: 18px;
+        }
+
+        .field label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            color: #aaa;
+            margin-bottom: 6px;
+            letter-spacing: 0.2px;
+        }
+
+        .field .hint {
+            font-size: 12px;
+            color: #555;
+            margin-top: 4px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 170px;
+            background: #0d0d0d;
+            color: #ccc;
+            border: 1px solid #282828;
+            border-radius: 8px;
+            padding: 12px 14px;
+            font-family: 'JetBrains Mono', 'Cascadia Code', Consolas, monospace;
+            font-size: 13px;
+            resize: vertical;
+            transition: border 0.2s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #3a3a3a;
+        }
+
+        .file-row {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        .file-row input[type="file"] {
+            color: #888;
+            font-size: 13px;
+            padding: 4px 0;
+        }
+
+        .file-row input[type="file"]::file-selector-button {
+            background: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            color: #ccc;
+            padding: 6px 18px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: 0.2s;
+            font-weight: 500;
+        }
+
+        .file-row input[type="file"]::file-selector-button:hover {
+            background: #282828;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 20px 0 16px;
+        }
+
+        .actions button {
+            background: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            color: #ddd;
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1 0 auto;
+            min-width: 140px;
+            justify-content: center;
+        }
+
+        .actions button svg {
+            flex-shrink: 0;
+        }
+
+        .actions button:hover:not(:disabled) {
+            background: #282828;
+            border-color: #3a3a3a;
+        }
+
+        .actions button:disabled {
+            opacity: 0.35;
+            cursor: not-allowed;
+        }
+
+        .actions button.primary {
+            background: #2a2a2a;
+            border-color: #3a3a3a;
+        }
+
+        .actions button.primary:hover:not(:disabled) {
+            background: #3a3a3a;
+            border-color: #4a4a4a;
+        }
+
+        .actions button.danger:hover:not(:disabled) {
+            border-color: #553333;
+            background: #221111;
+        }
+
+        .status {
+            background: #0d0d0d;
+            border-left: 3px solid #2a2a2a;
+            padding: 10px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-family: 'JetBrains Mono', Consolas, monospace;
+            color: #999;
+            margin-top: 6px;
+            min-height: 44px;
+            white-space: pre-wrap;
+            word-break: break-word;
+            transition: border-color 0.3s;
+        }
+
+        .status.ok {
+            border-left-color: #4a7a4a;
+            color: #8bc34a;
+        }
+
+        .status.err {
+            border-left-color: #7a3a3a;
+            color: #e88484;
+        }
+
+        .status.info {
+            border-left-color: #3a5a7a;
+            color: #7ab8e8;
+        }
+
+        .preview {
+            width: 100%;
+            height: 280px;
+            background: #0d0d0d;
+            color: #8bc34a;
+            border: 1px solid #282828;
+            border-radius: 8px;
+            padding: 12px 14px;
+            font-family: 'JetBrains Mono', Consolas, monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+            overflow: auto;
+            margin-top: 12px;
+            display: none;
+        }
+
+        .preview.visible {
+            display: block;
+        }
+
+        .example-link {
+            color: #6a8cff;
+            cursor: pointer;
+            font-size: 13px;
+            text-decoration: none;
+            border-bottom: 1px dashed #3a4a7a;
+            padding-bottom: 1px;
+            display: inline-block;
+            margin-top: 4px;
+        }
+
+        .example-link:hover {
+            color: #8aa8ff;
+            border-bottom-color: #5a7aaa;
+        }
+
+        .footer-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px 18px;
+            margin-top: 18px;
+            padding-top: 14px;
+            border-top: 1px solid #1e1e1e;
+            font-size: 11px;
+            color: #444;
+        }
+
+        .footer-links a {
+            color: #555;
+            text-decoration: none;
+            transition: 0.2s;
+        }
+
+        .footer-links a:hover {
+            color: #888;
+        }
+
+        @media (max-width: 600px) {
+            .wrap {
+                padding: 18px 16px 22px;
+            }
+
+            .head {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .head h2 {
+                font-size: 13px;
+            }
+
+            .links-row a {
+                font-size: 11px;
+                padding: 4px 10px;
+            }
+
+            .actions button {
+                min-width: 100px;
+                padding: 8px 16px;
+                font-size: 12px;
+            }
+
+            textarea {
+                height: 130px;
+                font-size: 12px;
+            }
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #0d0d0d;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #2a2a2a;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #3a3a3a;
+        }
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <div class="head">
+            <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+                <img src="favicon.png" alt="logo" width="44" height="44">
+                <h2>TNR - WorkspaceSerializer to RBXMX</h2>
+            </div>
+            <div class="lang" id="langToggle">
+                <button data-lang="en" class="active">EN</button>
+                <button data-lang="uk">UA</button>
+            </div>
+        </div>
+
+        <div class="links-row">
+            <a href="#" target="_blank">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h12"/></svg>
+                Docs
+            </a>
+            <a href="https://github.com/Bondpley/Tooling-Node-Runtime-WorkspaceSerializer/" target="_blank">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+                GitHub
+            </a>
+            <a href="https://github.com/Bondpley/Tooling-Node-Runtime-WorkspaceSerializer/graphs/contributors" target="_blank">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                Creators
+            </a>
+            <a href="https://github.com/Bondpley/Tooling-Node-Runtime-WorkspaceSerializer/blob/main/Readme.md" target="_blank">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                Support
+            </a>
+            <a href="https://github.com/Bondpley/Tooling-Node-Runtime-WorkspaceSerializer/blob/main/Readme.md" target="_blank">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+                Changelog
+            </a>
+        </div>
+
+        <div class="field">
+            <label data-key="fileLabel">Load JSON file</label>
+            <div class="file-row">
+                <input type="file" id="fileInput" accept=".json,.txt">
+                <span class="hint" data-key="fileHint">handles large files via background worker</span>
+            </div>
+        </div>
+
+        <div class="field">
+            <label data-key="pasteLabel">… or paste JSON manually</label>
+            <textarea id="jsonInput" data-key="placeholder" placeholder='[{"Class":"MeshPart","Name":"MyMesh","Properties":{...}}]'></textarea>
+            <span class="example-link" id="loadExample" data-key="exampleLink">load sample</span>
+        </div>
+
+        <div class="actions">
+            <button class="primary" id="convertBtn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                <span data-key="convertBtn">Convert & Download</span>
+            </button>
+            <button id="previewBtn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                <span data-key="previewBtn">Preview XML</span>
+            </button>
+            <button class="danger" id="clearBtn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                <span data-key="clearBtn">Clear</span>
+            </button>
+        </div>
+
+        <div id="status" class="status" data-key="statusReady">Ready</div>
+        <div id="xmlPreview" class="preview"></div>
+
+        <div class="footer-links">
+            <span>v1.3.0</span>
+            <a href="https://raw.githubusercontent.com/Bondpley/Tooling-Node-Runtime-WorkspaceSerializer/refs/heads/main/LICENSE">License</a>
+            <a href="#">Privacy</a>
+            <a href="#">Terms</a>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            var fileInput = document.getElementById('fileInput');
+            var jsonInput = document.getElementById('jsonInput');
+            var statusEl = document.getElementById('status');
+            var convertBtn = document.getElementById('convertBtn');
+            var previewBtn = document.getElementById('previewBtn');
+            var clearBtn = document.getElementById('clearBtn');
+            var xmlPreview = document.getElementById('xmlPreview');
+            var langToggle = document.getElementById('langToggle');
+
+            var lastResult = null;
+            var activeLang = 'en';
+
+            var strings = {
+                en: {
+                    statusReady: 'Ready. Load a file or paste JSON.',
+                    statusCleared: 'Cleared.',
+                    statusSample: 'Sample loaded (size & InitialSize will be added).',
+                    statusNoInput: 'Select a file or paste JSON.',
+                    statusReading: 'Reading file…',
+                    statusReadError: 'Failed to read file.',
+                    statusProcessing: 'Processing… {p}%',
+                    statusError: 'Error: {m}',
+                    statusDone: 'Done! Objects: {c}.',
+                    statusTerrain: 'Terrain skipped: {t}.',
+                    statusSkipped: 'Skipped properties (unknown enum): {n}.',
+                    statusSkippedList: '{list}',
+                    convertBtn: 'Convert & Download',
+                    previewBtn: 'Preview XML',
+                    clearBtn: 'Clear',
+                    fileLabel: 'Load JSON file',
+                    fileHint: 'handles large files via background worker',
+                    pasteLabel: '… or paste JSON manually',
+                    placeholder: '[{"Class":"MeshPart","Name":"MyMesh","Properties":{...}}]',
+                    exampleLink: 'load sample',
+                },
+                uk: {
+                    statusReady: 'Готово. Завантажте файл або вставте JSON.',
+                    statusCleared: 'Очищено.',
+                    statusSample: 'Приклад завантажено (size та InitialSize додадуться).',
+                    statusNoInput: 'Виберіть файл або вставте JSON.',
+                    statusReading: 'Читання файлу…',
+                    statusReadError: 'Не вдалося прочитати файл.',
+                    statusProcessing: 'Обробка… {p}%',
+                    statusError: 'Помилка: {m}',
+                    statusDone: 'Готово! Об\'єктів: {c}.',
+                    statusTerrain: 'Terrain пропущено: {t}.',
+                    statusSkipped: 'Пропущено властивостей (невідомий Enum): {n}.',
+                    statusSkippedList: '{list}',
+                    convertBtn: 'Конвертувати і завантажити',
+                    previewBtn: 'Показати XML',
+                    clearBtn: 'Очистити',
+                    fileLabel: 'Завантажити JSON файл',
+                    fileHint: 'великі файли обробляються у фоновому потоці',
+                    pasteLabel: '… або вставте JSON вручну',
+                    placeholder: '[{"Class":"MeshPart","Name":"MyMesh","Properties":{...}}]',
+                    exampleLink: 'завантажити приклад',
+                }
+            };
+
+            function t(key, vars) {
+                var dict = strings[activeLang] || strings.en;
+                var val = dict[key] || key;
+                if (vars) {
+                    for (var k in vars) {
+                        val = val.replace('{' + k + '}', vars[k]);
+                    }
+                }
+                return val;
+            }
+
+            function setStatus(msg, type) {
+                statusEl.textContent = msg;
+                statusEl.className = 'status' + (type ? ' ' + type : '');
+            }
+
+            function updateLang() {
+                var els = document.querySelectorAll('[data-key]');
+                for (var i = 0; i < els.length; i++) {
+                    var el = els[i];
+                    var key = el.getAttribute('data-key');
+                    var val = t(key);
+                    if (el.tagName === 'INPUT' && el.type === 'file') {
+                        continue;
+                    }
+                    if (el.tagName === 'TEXTAREA') {
+                        el.placeholder = val;
+                    } else if (el.tagName === 'BUTTON') {
+                        var span = el.querySelector('span[data-key]');
+                        if (span) span.textContent = val;
+                    } else {
+                        el.textContent = val;
+                    }
+                }
+                var btns = document.querySelectorAll('.actions button');
+                for (var j = 0; j < btns.length; j++) {
+                    var b = btns[j];
+                    var sp = b.querySelector('span[data-key]');
+                    if (sp) {
+                        var k = sp.getAttribute('data-key');
+                        sp.textContent = t(k);
+                    }
+                }
+            }
+
+            langToggle.addEventListener('click', function(e) {
+                var btn = e.target.closest('button');
+                if (!btn) return;
+                var lang = btn.getAttribute('data-lang');
+                if (!lang || lang === activeLang) return;
+                activeLang = lang;
+                var all = langToggle.querySelectorAll('button');
+                for (var i = 0; i < all.length; i++) {
+                    all[i].classList.toggle('active', all[i].getAttribute('data-lang') === lang);
+                }
+                updateLang();
+                var cur = statusEl.textContent;
+                if (cur) {
+                    var parts = cur.split('\n');
+                    var first = parts[0] || '';
+                    if (first.indexOf('Ready') > -1 || first.indexOf('Готово') > -1) {
+                        setStatus(t('statusReady'), '');
+                    }
+                }
+            });
+
+            document.getElementById('loadExample').addEventListener('click', function() {
+                jsonInput.value = JSON.stringify([{
+                    Class: "MeshPart",
+                    Name: "CustomMesh",
+                    Properties: {
+                        Size: ["V3", 4, 4, 4],
+                        CFrame: ["CF", 0, 5, 0, 0, 0, -1, 0, 1, 0],
+                        Color: ["C3", 1, 0.2, 0.3],
+                        Material: ["EN", "Material", "Plastic"],
+                        MeshId: "rbxassetid://123456789",
+                        TextureId: "rbxassetid://987654321",
+                        TextureID: "rbxassetid://111222333",
+                        VertexColor: ["C3", 1, 1, 1],
+                        Anchored: true,
+                        Transparency: 0,
+                        RenderFidelity: ["EN", "RenderFidelity", "Automatic"],
+                        CollisionFidelity: ["EN", "CollisionFidelity", "PreciseConvexDecomposition"]
+                    },
+                    Children: []
+                }], null, 2);
+                setStatus(t('statusSample'), 'ok');
+            });
+
+            clearBtn.addEventListener('click', function() {
+                jsonInput.value = '';
+                fileInput.value = '';
+                xmlPreview.className = 'preview';
+                setStatus(t('statusCleared'), '');
+            });
+
+            var workerSrc = `
+const MATERIAL_ID = {
+    Plastic:256, SmoothPlastic:272, Neon:288, Wood:512, WoodPlanks:528,
+    Marble:784, Basalt:788, Slate:800, CrackedLava:804, Concrete:816,
+    Limestone:820, Granite:832, Pavement:836, Brick:848, Pebble:864,
+    Cobblestone:880, Rock:896, Sandstone:912, CorrodedMetal:1040,
+    DiamondPlate:1056, Foil:1072, Metal:1088, Grass:1280, LeafyGrass:1284,
+    Sand:1296, Fabric:1312, Snow:1328, Mud:1344, Ground:1360, Asphalt:1376,
+    Salt:1392, Ice:1536, Glacier:1552, Glass:1568, ForceField:1584,
+    Air:1792, Water:2048, Cardboard:2304, Carpet:2305, CeramicTiles:2306,
+    ClayRoofTiles:2307, RoofShingles:2308, Leather:2309, Plaster:2310, Rubber:2311
+};
+
+const ENUM_TABLES = {
+    Material: MATERIAL_ID,
+    PartType: {Ball:0, Block:1, Cylinder:2, Wedge:3, CornerWedge:4},
+    NormalId: {Right:0, Top:1, Back:2, Left:3, Bottom:4, Front:5},
+    ResamplerMode: {Default:0, Pixelated:1},
+    SurfaceType: {Smooth:0, Glue:1, Weld:2, Studs:3, Inlet:4, Universal:5, Hinge:6, Motor:7, SteppingMotor:8, SmoothNoOutlines:10},
+    FormFactor: {Symmetric:0, Brick:1, Plate:2, Custom:3},
+    Font: {Legacy:0, Arial:1, ArialBold:2, SourceSans:3, SourceSansBold:4, SourceSansSemibold:15, SourceSansLight:9, SourceSansItalic:16},
+    TextXAlignment: {Left:0, Right:1, Center:2},
+    TextYAlignment: {Top:0, Center:1, Bottom:2},
+    HorizontalAlignment: {Center:0, Left:1, Right:2},
+    VerticalAlignment: {Center:0, Top:1, Bottom:2},
+    AutomaticSize: {None:0, X:1, Y:2, XY:3},
+    ProximityPromptStyle: {Default:0, Custom:1},
+    ParticleOrientation: {FacingCamera:0, FacingCameraWorldUp:1, VelocityParallel:2, VelocityPerpendicular:3},
+    ParticleEmitterShape: {Box:0, Sphere:1, Cylinder:2, Disc:3},
+    SurfaceGuiShape: {Flat:0, Curved:1},
+    SizeConstraint: {RelativeXY:0, RelativeXX:1, RelativeYY:2},
+    FrameStyle: {Custom:0, ChatBlue:1, RobloxSquare:2, RobloxRound:3, ChatGreen:4, ChatRed:5, DropShadow:6},
+    ScaleType: {Stretch:0, Slice:1, Tile:2, Fit:3, Crop:4},
+    MeshType: {Head:0, Torso:1, Wedge:2, Sphere:3, Cylinder:4, FileMesh:5, Brick:6, Prism:7, Pyramid:8, ParallelRamp:9, RightAngleRamp:10, CornerWedge:11},
+    Style: {AlternatingSupports:0, BridgeStyleSupports:1, NoSupports:2},
+    RenderFidelity: {Automatic:0, Precise:1},
+    CollisionFidelity: {Default:0, Box:1, Hull:2, PreciseConvexDecomposition:3},
+    Shape: {Ball:0, Block:1, Cylinder:2, Wedge:3}
+};
+
+function esc(s) {
+    s = String(s).replace(/[\\u0000-\\u0008\\u000B\\u000C\\u000E-\\u001F\\uFFFE\\uFFFF]/g, '');
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
+}
+
+function isInt(n) { return Number.isInteger(n); }
+
+function safeNum(n) {
+    var num = Number(n);
+    return Number.isFinite(num) ? num : 0;
+}
+
+var skipped = [];
+var contentProps = ['MeshId','TextureId','TextureID','SoundId','FaceId','Image','Decal','Object','Source','StringValue'];
+
+function serializeProperty(name, value, out) {
+    if (value === null || value === undefined) return;
+    var n = esc(name);
+    if (typeof value === 'string') {
+        if (contentProps.includes(name)) {
+            var cv = '';
+            if (value === '' || value === null || value === undefined) {
+                cv = '<null></null>';
+            } else if (value.startsWith('rbxassetid://') || value.startsWith('http')) {
+                cv = '<url>' + esc(value) + '</url>';
+            } else {
+                cv = esc(value);
+            }
+            out.push('<Content name="' + n + '">' + cv + '</Content>\\n');
+        } else {
+            out.push('<string name="' + n + '">' + esc(value) + '</string>\\n');
+        }
+        return;
+    }
+    if (typeof value === 'boolean') {
+        out.push('<bool name="' + n + '">' + (value ? 'true' : 'false') + '</bool>\\n');
+        return;
+    }
+    if (typeof value === 'number') {
+        var sv = safeNum(value);
+        var t = isInt(sv) ? 'int' : 'float';
+        out.push('<' + t + ' name="' + n + '">' + sv + '</' + t + '>\\n');
+        return;
+    }
+    if (Array.isArray(value)) {
+        var tag = value[0];
+        var a = value.slice(1).map(function(x) { return typeof x === 'string' ? x : safeNum(x); });
+        switch (tag) {
+            case 'V3':
+                out.push('<Vector3 name="' + n + '"><X>' + a[0] + '</X><Y>' + a[1] + '</Y><Z>' + a[2] + '</Z></Vector3>\\n');
+                return;
+            case 'V2':
+                if (a[0] === 0 && a[1] === 0) return;
+                out.push('<Vector2 name="' + n + '"><X>' + a[0] + '</X><Y>' + a[1] + '</Y></Vector2>\\n');
+                return;
+            case 'C3':
+                out.push('<Color3 name="' + n + '"><R>' + a[0] + '</R><G>' + a[1] + '</G><B>' + a[2] + '</B></Color3>\\n');
+                return;
+            case 'UD2':
+                out.push('<UDim2 name="' + n + '"><X><Scale>' + a[0] + '</Scale><Offset>' + a[1] + '</Offset></X><Y><Scale>' + a[2] + '</Scale><Offset>' + a[3] + '</Offset></Y></UDim2>\\n');
+                return;
+            case 'UD':
+                out.push('<UDim name="' + n + '"><Scale>' + a[0] + '</Scale><Offset>' + a[1] + '</Offset></UDim>\\n');
+                return;
+            case 'NR':
+                out.push('<NumberRange name="' + n + '"><Min>' + a[0] + '</Min><Max>' + a[1] + '</Max></NumberRange>\\n');
+                return;
+            case 'BC':
+                out.push('<BrickColor name="' + n + '">' + a[0] + '</BrickColor>\\n');
+                return;
+            case 'EN': {
+                var table = ENUM_TABLES[a[0]];
+                var id = table ? table[a[1]] : undefined;
+                if (id === undefined) {
+                    skipped.push(name + ' (Enum.' + a[0] + '.' + a[1] + ')');
+                    return;
+                }
+                out.push('<token name="' + n + '">' + id + '</token>\\n');
+                return;
+            }
+            case 'V3I':
+                out.push('<Vector3int16 name="' + n + '"><X>' + a[0] + '</X><Y>' + a[1] + '</Y><Z>' + a[2] + '</Z></Vector3int16>\\n');
+                return;
+            case 'V2I':
+                out.push('<Vector2int16 name="' + n + '"><X>' + a[0] + '</X><Y>' + a[1] + '</Y></Vector2int16>\\n');
+                return;
+            case 'PP':
+                out.push('<PhysicalProperties name="' + n + '"><Density>' + a[0] + '</Density><Friction>' + a[1] + '</Friction><Elasticity>' + a[2] + '</Elasticity><FrictionWeight>' + a[3] + '</FrictionWeight><ElasticityWeight>' + a[4] + '</ElasticityWeight></PhysicalProperties>\\n');
+                return;
+            case 'CF': {
+                var px = a[0], py = a[1], pz = a[2];
+                var lx = a[3], ly = a[4], lz = a[5];
+                var ux = a[6], uy = a[7], uz = a[8];
+                var rx = ly * uz - lz * uy;
+                var ry = lz * ux - lx * uz;
+                var rz = lx * uy - ly * ux;
+                out.push('<CoordinateFrame name="' + n + '"><X>' + px + '</X><Y>' + py + '</Y><Z>' + pz + '</Z>'
+                    + '<R00>' + rx + '</R00><R01>' + ux + '</R01><R02>' + (-lx) + '</R02>'
+                    + '<R10>' + ry + '</R10><R11>' + uy + '</R11><R12>' + (-ly) + '</R12>'
+                    + '<R20>' + rz + '</R20><R21>' + uz + '</R21><R22>' + (-lz) + '</R22></CoordinateFrame>\\n');
+                return;
+            }
+            case 'NS': {
+                out.push('<NumberSequence name="' + n + '">');
+                for (var ki = 0; ki < a.length; ki++) {
+                    var kp = a[ki];
+                    out.push('<NumberSequenceKeypoint time="' + kp[0] + '" value="' + kp[1] + '" envelope="' + kp[2] + '"/>');
+                }
+                out.push('</NumberSequence>\\n');
+                return;
+            }
+            case 'CS': {
+                out.push('<ColorSequence name="' + n + '">');
+                for (var ci = 0; ci < a.length; ci++) {
+                    var ck = a[ci];
+                    var tm = safeNum(ck[0]);
+                    var rr = Math.round(safeNum(ck[1]) * 255);
+                    var gg = Math.round(safeNum(ck[2]) * 255);
+                    var bb = Math.round(safeNum(ck[3]) * 255);
+                    var hex = [rr, gg, bb].map(function(c) {
+                        return Math.min(255, Math.max(0, c)).toString(16).padStart(2, '0');
+                    }).join('');
+                    out.push('<ColorSequenceKeypoint time="' + tm + '" value="#' + hex + '"/>');
+                }
+                out.push('</ColorSequence>\\n');
+                return;
+            }
+            default:
+                return;
+        }
+    }
+    out.push('<string name="' + n + '">' + esc(JSON.stringify(value)) + '</string>\\n');
+}
+
+var refCounter = 0;
+var terrainSkipped = 0;
+
+function buildInstance(inst, parentRef, out) {
+    var className = inst.Class || 'Folder';
+    if (className === 'Terrain') {
+        terrainSkipped++;
+        return;
+    }
+    var name = inst.Name || 'Instance';
+    var props = inst.Properties || {};
+    var children = inst.Children || [];
+    var attrs = inst.Attributes || {};
+    var ref = 'RBX' + (refCounter++);
+
+    if (props.MeshId && !(props.MeshType && Array.isArray(props.MeshType) && props.MeshType[0] === 'EN' && props.MeshType[1] === 'MeshType' && props.MeshType[2] === 'FileMesh')) {
+        props.MeshType = ['EN', 'MeshType', 'FileMesh'];
+    } else if (props.MeshId && props.MeshType && Array.isArray(props.MeshType) && props.MeshType[0] === 'EN' && props.MeshType[1] === 'MeshType' && props.MeshType[2] !== 'FileMesh') {
+        props.MeshType = ['EN', 'MeshType', 'FileMesh'];
+    }
+
+    if (className === 'MeshPart' && props.MeshId) {
+        var sz = null;
+        if (props.Size && Array.isArray(props.Size) && props.Size[0] === 'V3') {
+            sz = props.Size.slice();
+        } else if (props.size && Array.isArray(props.size) && props.size[0] === 'V3') {
+            sz = props.size.slice();
+        } else {
+            sz = ['V3', 1, 1, 1];
+        }
+        props.size = sz.slice();
+        props.InitialSize = sz.slice();
+    }
+
+    out.push('\\t<Item class="' + esc(className) + '" referent="' + ref + '">');
+    out.push('\\t\\t<Properties>');
+    out.push('\\t\\t\\t<string name="Name">' + esc(name) + '</string>');
+
+    for (var k in props) {
+        var line = [];
+        serializeProperty(k, props[k], line);
+        if (line.length) {
+            out.push('\\t\\t\\t' + line.join('').trim());
+        }
+    }
+    for (var ak in attrs) {
+        var al = [];
+        serializeProperty(ak, attrs[ak], al);
+        if (al.length) {
+            out.push('\\t\\t\\t' + al.join('').trim());
+        }
+    }
+    if (parentRef) out.push('\\t\\t\\t<Ref name="Parent">' + parentRef + '</Ref>');
+    out.push('\\t\\t</Properties>');
+
+    for (var ci = 0; ci < children.length; ci++) {
+        buildInstance(children[ci], ref, out);
+    }
+    out.push('\\t</Item>');
+}
+
+self.onmessage = function(e) {
+    try {
+        var text = e.data;
+        var data = JSON.parse(text);
+        if (!Array.isArray(data)) throw new Error('JSON must be an array of objects.');
+        var out = [];
+        out.push('<?xml version="1.0" encoding="UTF-8"?>');
+        out.push('<roblox xmlns:xmime="http://www.w3.org/2005/05/xmlmime" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.roblox.com/roblox.xsd" version="4">');
+        out.push('\\t<Meta name="ExplicitAutoJoints">true</Meta>');
+        out.push('\\t<External>null</External>');
+        out.push('\\t<External>nil</External>');
+        var rootRef = 'RBX' + (refCounter++);
+        out.push('\\t<Item class="Model" referent="' + rootRef + '">');
+        out.push('\\t\\t<Properties>');
+        out.push('\\t\\t\\t<string name="Name">WorkspaceMap</string>');
+        out.push('\\t\\t</Properties>');
+        for (var i = 0; i < data.length; i++) {
+            buildInstance(data[i], rootRef, out);
+            if (i % 2000 === 0) self.postMessage({progress: Math.round((i / data.length) * 100)});
+        }
+        out.push('\\t</Item>');
+        out.push('\\t<SharedStrings>');
+        out.push('\\t</SharedStrings>');
+        out.push('</roblox>');
+        self.postMessage({
+            done: true,
+            chunks: out,
+            skipped: skipped,
+            count: data.length,
+            terrainSkipped: terrainSkipped
+        });
+    } catch (err) {
+        self.postMessage({error: err.message});
+    }
+};
+`;
+
+            var worker = null;
+
+            function getWorker() {
+                var blob = new Blob([workerSrc], { type: 'application/javascript' });
+                return new Worker(URL.createObjectURL(blob));
+            }
+
+            function download(chunks) {
+                var blob = new Blob(chunks, { type: 'application/xml;charset=utf-8' });
+                var url = URL.createObjectURL(blob);
+                var a = document.createElement('a');
+                a.href = url;
+                a.download = 'map.rbxmx';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                setTimeout(function() { URL.revokeObjectURL(url); }, 10000);
+            }
+
+            function runConversion(text, showPreview) {
+                convertBtn.disabled = true;
+                previewBtn.disabled = true;
+                setStatus(t('statusProcessing', { p: 0 }), 'info');
+                if (worker) { worker.terminate(); }
+                worker = getWorker();
+                worker.onmessage = function(e) {
+                    var msg = e.data;
+                    if (msg.progress !== undefined) {
+                        setStatus(t('statusProcessing', { p: msg.progress }), 'info');
+                    } else if (msg.error) {
+                        setStatus(t('statusError', { m: msg.error }), 'err');
+                        convertBtn.disabled = false;
+                        previewBtn.disabled = false;
+                        worker.terminate();
+                        worker = null;
+                    } else if (msg.done) {
+                        lastResult = msg.chunks.join('\n');
+                        if (showPreview) {
+                            xmlPreview.textContent = lastResult;
+                            xmlPreview.className = 'preview visible';
+                        } else {
+                            download(msg.chunks);
+                        }
+                        var s = t('statusDone', { c: msg.count });
+                        if (msg.terrainSkipped) {
+                            s += '\n' + t('statusTerrain', { t: msg.terrainSkipped });
+                        }
+                        if (msg.skipped && msg.skipped.length) {
+                            var list = msg.skipped.slice(0, 10).join(', ') + (msg.skipped.length > 10 ? '…' : '');
+                            s += '\n' + t('statusSkipped', { n: msg.skipped.length }) + '\n' + list;
+                        }
+                        setStatus(s, 'ok');
+                        convertBtn.disabled = false;
+                        previewBtn.disabled = false;
+                        worker.terminate();
+                        worker = null;
+                    }
+                };
+                worker.onerror = function(e) {
+                    setStatus(t('statusError', { m: e.message }), 'err');
+                    convertBtn.disabled = false;
+                    previewBtn.disabled = false;
+                    worker = null;
+                };
+                worker.postMessage(text);
+            }
+
+            function handleConvert(showPreview) {
+                var file = fileInput.files[0];
+                if (file) {
+                    setStatus(t('statusReading'), 'info');
+                    var reader = new FileReader();
+                    reader.onload = function() {
+                        runConversion(reader.result, showPreview);
+                    };
+                    reader.onerror = function() {
+                        setStatus(t('statusReadError'), 'err');
+                    };
+                    reader.readAsText(file);
+                    return;
+                }
+                var text = jsonInput.value.trim();
+                if (!text) {
+                    setStatus(t('statusNoInput'), 'err');
+                    return;
+                }
+                runConversion(text, showPreview);
+            }
+
+            convertBtn.addEventListener('click', function() { handleConvert(false); });
+            previewBtn.addEventListener('click', function() { handleConvert(true); });
+
+            setStatus(t('statusReady'), '');
+            updateLang();
+        })();
+    </script>
+</body>
+</html>

@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Docs · Tooling & Node Runtime WorkspaceSerializer</title>
+  <link rel="icon" href="favicon.png">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #0d1117;
+      color: #c9d1d9;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .navbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 2rem;
+      border-bottom: 1px solid #30363d;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .navbar .brand {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #f0f6fc;
+      letter-spacing: -0.3px;
+      white-space: nowrap;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .nav-links a {
+      color: #8b949e;
+      text-decoration: none;
+      font-size: 0.95rem;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover {
+      color: #58a6ff;
+    }
+
+    .nav-links a.active {
+      color: #f0f6fc;
+    }
+
+    .search-badge {
+      background: #21262d;
+      padding: 0.2rem 0.8rem;
+      border-radius: 6px;
+      border: 1px solid #30363d;
+      color: #8b949e;
+      font-size: 0.85rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .search-badge span {
+      opacity: 0.5;
+    }
+
+    .main {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      padding: 3rem 2rem;
+    }
+
+    .container {
+      max-width: 820px;
+      width: 100%;
+    }
+
+    .page-title {
+      font-size: 2.6rem;
+      font-weight: 700;
+      color: #f0f6fc;
+      letter-spacing: -0.5px;
+      margin-bottom: 0.25rem;
+    }
+
+    .page-sub {
+      color: #8b949e;
+      font-size: 1rem;
+      margin-bottom: 2rem;
+      border-bottom: 1px solid #21262d;
+      padding-bottom: 0.75rem;
+    }
+
+    .section-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #f0f6fc;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 2rem;
+      margin-bottom: 0.3rem;
+    }
+
+    .section-sub {
+      color: #8b949e;
+      font-size: 0.95rem;
+      margin-bottom: 1rem;
+    }
+
+    .type-block {
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      padding: 1.5rem 1.8rem;
+      font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+      font-size: 0.9rem;
+      line-height: 1.8;
+      overflow-x: auto;
+      margin-top: 0.5rem;
+    }
+
+    .type-block .keyword {
+      color: #ff7b72;
+    }
+
+    .type-block .interface {
+      color: #58a6ff;
+    }
+
+    .type-block .bracket {
+      color: #ffa657;
+    }
+
+    .type-block .prop {
+      color: #f0f6fc;
+      font-weight: 500;
+    }
+
+    .type-block .type {
+      color: #ffa657;
+    }
+
+    .type-block .comment {
+      color: #8b949e;
+      font-style: italic;
+    }
+
+    .type-block .string {
+      color: #a5d6ff;
+    }
+
+    .type-block .bool {
+      color: #ffa657;
+    }
+
+    .type-block .number {
+      color: #ffa657;
+    }
+
+    .type-block .indent-1 {
+      padding-left: 1.8rem;
+      display: block;
+    }
+
+    .type-block .indent-2 {
+      padding-left: 3.6rem;
+      display: block;
+    }
+
+    .type-block .line {
+      display: block;
+    }
+
+    .type-block .prop-group {
+      display: block;
+      margin-top: 0.3rem;
+    }
+
+    .prop-doc {
+      color: #8b949e;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-size: 0.85rem;
+      font-style: normal;
+      line-height: 1.5;
+      padding-left: 0.3rem;
+    }
+
+    .prop-doc .highlight {
+      color: #c9d1d9;
+    }
+
+    .footer {
+      border-top: 1px solid #30363d;
+      padding: 1.5rem 2rem;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      font-size: 0.9rem;
+      color: #484f58;
+    }
+
+    .footer a {
+      color: #58a6ff;
+      text-decoration: none;
+    }
+
+    .footer a:hover {
+      text-decoration: underline;
+    }
+
+    .footer .built-with {
+      color: #8b949e;
+    }
+
+    @media (max-width: 600px) {
+      .navbar {
+        flex-direction: column;
+        align-items: stretch;
+        text-align: center;
+      }
+      .nav-left {
+        justify-content: center;
+      }
+      .nav-links {
+        justify-content: center;
+      }
+      .page-title {
+        font-size: 2rem;
+        text-align: center;
+      }
+      .page-sub {
+        text-align: center;
+      }
+      .type-block {
+        padding: 1rem;
+        font-size: 0.8rem;
+      }
+      .type-block .indent-1 {
+        padding-left: 0.8rem;
+      }
+      .type-block .indent-2 {
+        padding-left: 1.6rem;
+      }
+      .footer {
+        flex-direction: column;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <a href="index.html">
+    <div class="nav-left">
+      <img src="favicon.png" alt="logo" width="44" height="44" />
+      <span class="brand">Tooling & Node Runtime WorkspaceSerializer</span>
+    </div></a>
+    <div class="nav-links">
+      <a href="" class="active">Docs</a>
+      <a href="#">Discord Support</a>
+      <a href="converter.html">Converter</a>
+      <span class="search-badge">
+        <span>🔍</span> Search
+      </span>
+    </div>
+  </nav>
+
+  <main class="main">
+    <div class="container">
+
+      <h1 class="page-title">TNR Load Parameters</h1>
+      <div class="page-sub">Types</div>
+
+      <div class="section-title">Types</div>
+      <div class="section-sub">CustomOptions table</div>
+
+      <p style="color: #8b949e; font-size: 0.95rem; margin-bottom: 1.2rem;">
+        Represents the options for saving instances with custom settings using the synsaveinstance function.
+      </p>
+
+      <div class="type-block">
+  <span class="indent-1 line">
+    <span class="comment">-- Function: tnr(webhookUrl?, mcs?, yieldsc?, ccolor?)</span>
+  </span>
+  <span class="indent-1 line">
+    <span class="comment">-- Saves the current Workspace and optionally sends the serialized code</span>
+  </span>
+  <span class="indent-1 line" style="margin-bottom: 0.4rem;">
+    <span class="comment">-- to Discord via a webhook. All parameters are optional.</span>
+  </span>
+
+  <span class="indent-1 line">
+    <span class="comment">-- Parameters:</span>
+  </span>
+
+  <span class="indent-1 line">
+    <span class="comment">-- webhookUrl : </span><span class="type">string</span><span class="comment">? – Discord webhook URL where the result will be sent.</span>
+  </span>
+
+  <!-- mcs -->
+  <span class="indent-1 line">
+    <span class="comment">-- mcs        : </span><span class="type">number</span><span class="comment">? – MaxChunkSize, the maximum size of a single chunk.</span>
+  </span>
+  <span class="indent-2 line" style="margin-bottom: 0.2rem;">
+    <span class="comment">-- Must not exceed 180,000 (Character limit).</span>
+  </span>
+
+  <span class="indent-1 line">
+    <span class="comment">-- yieldsc    : </span><span class="type">number</span><span class="comment">? – YieldEvery, frequency of yielding to prevent freezes.</span>
+  </span>
+  <span class="indent-2 line" style="margin-bottom: 0.2rem;">
+    <span class="comment">-- Must be > 100. Recommended max: 9999 (exceeding may cause lag).</span>
+  </span>
+
+  <span class="indent-1 line">
+    <span class="comment">-- ccolor     : </span><span class="type">Color3</span><span class="comment">? – The color of the save button (Color3 value).</span>
+  </span>
+
+  <span class="indent-1 line" style="margin-top: 0.4rem;">
+    <span class="comment">-- Usage example:</span>
+  </span>
+
+  <span class="indent-1 line">
+    <span class="keyword">local</span> loadTNR = <span class="prop">loadstring</span>(<span class="prop">game</span>:<span class="prop">HttpGet</span>(<span class="type">"https://raw.githubusercontent.com/Bondpley/Tooling-Node-Runtime-WorkspaceSerializer/refs/heads/main/ToolingNodeRuntimeWorkspaceSerializer.luau"</span>, <span class="keyword">true</span>))
+  </span>
+
+  <span class="indent-1 line">
+    <span class="keyword">local</span> tnr = <span class="prop">loadTNR</span>()
+  </span>
+
+  <span class="indent-1 line" style="margin-bottom: 0.6rem;">
+    <span class="prop">tnr</span>(<span class="type">"https://discord.com/api/webhooks/..."</span>, <span class="number">100000</span>, <span class="number">500</span>, <span class="prop">Color3</span>.<span class="prop">new</span>(<span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>))
+  </span>
+
+  <span class="indent-1 line">
+    <span class="comment">-- If called without parameters, defaults apply (no webhook, standard chunk size, etc.).</span>
+  </span>
+</div>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div>Copyright © 2026 <a href="https://github.com/Bondpley">Bondpley</a>.</div>
+    <div class="built-with">
+      Project <a href="https://github.com/Bondpley/Tooling-Node-Runtime-WorkspaceSerialize">Github</a>
+    </div>
+  </footer>
+
+</body>
+</html>
