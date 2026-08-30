@@ -69,12 +69,12 @@ return(function(webhookUrl)
         if instance:IsA("MeshPart") or instance:IsA("SpecialMesh") or instance:IsA("BlockMesh") or instance:IsA("CylinderMesh") then
             if instance:IsA("MeshPart") then
                 local meshId = pcall(function() return instance.MeshId end) and instance.MeshId or ""
-                local textureId = pcall(function() return instance.TextureID end) and instance.TextureID or ""
+                local textureId = pcall(function() return instance.TextureId end) and instance.TextureId or ""
                 if meshId ~= "" then
                     data.Properties.MeshId = meshId
                 end
                 if textureId ~= "" then
-                    data.Properties.TextureID = textureId
+                    data.Properties.TextureId = textureId
                 end
                 local vertexColor = pcall(function() return instance.VertexColor end) and instance.VertexColor or nil
                 if vertexColor then
