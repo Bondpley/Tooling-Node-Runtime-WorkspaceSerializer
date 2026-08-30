@@ -21,7 +21,7 @@ return(function(webhookUrl, mcs, yieldsc, ccolor, pcps)
     
     local maxChunkSize = if msc ~= nil and msc <= 180000 then msc else 180000
     local autoSaveInterval = 300
-    local yieldEvery = if yieldsc ~= nil and yieldsc > 100 then msc else 9999
+    local yieldEvery = if yieldsc ~= nil and yieldsc > 100 then yieldsc else 9999
     local previewMax = 100000
     
     local function sanitizeNumber(value)
@@ -68,34 +68,50 @@ return(function(webhookUrl, mcs, yieldsc, ccolor, pcps)
         end
         
         if instance:IsA("MeshPart") or instance:IsA("SpecialMesh") or instance:IsA("BlockMesh") or instance:IsA("CylinderMesh") then
-            if instance:IsA("MeshPart") then
+if instance:IsA("MeshPart") then
     local meshId = pcall(function() return instance.MeshId end) and instance.MeshId or ""
     local textureId = pcall(function() return instance.TextureID end) and instance.TextureID or ""
-    if meshId ~= "" then
-        data.Properties.MeshId = meshId
-    end
-    if textureId ~= "" then
-        data.Properties.TextureID = textureId
-    end
+    if meshId ~= "" then data.Properties.MeshId = meshId end
+    if textureId ~= "" then data.Properties.TextureID = textureId end
+    
     local vertexColor = pcall(function() return instance.VertexColor end) and instance.VertexColor or nil
-    if vertexColor then
-        data.Properties.VertexColor = encodeValue(vertexColor)
-    end
+    if vertexColor then data.Properties.VertexColor = encodeValue(vertexColor) end
 
     local initialSize = nil
     local okDirect, valDirect = pcall(function() return instance.InitialSize end)
     if okDirect and valDirect then
         initialSize = valDirect
-        elseif gethiddenproperty then
-                local okHidden, valHidden = pcall(gethiddenproperty, instance, "InitialSize")
-                if okHidden and valHidden then
-                    initialSize = valHidden
-                end
-                end
-                if initialSize then
-                    data.Properties.InitialSize = encodeValue(initialSize)
-                end
-            end
+    elseif gethiddenproperty then
+        local okHidden, valHidden = pcall(gethiddenproperty, instance, "InitialSize")
+        if okHidden and valHidden then
+            initialSize = valHidden
+        end
+    end
+    if initialSize then data.Properties.InitialSize = encodeValue(initialSize) end
+
+elseif instance:IsA("SpecialMesh") then
+    local meshId = pcall(function() return instance.MeshId end) and instance.MeshId or ""
+    if meshId ~= "" then data.Properties.MeshId = meshId end
+    
+    local textureId = pcall(function() return instance.TextureId end) and instance.TextureId or ""
+    if textureId ~= "" then data.Properties.TextureId = textureId end
+    
+    local scale = pcall(function() return instance.Scale end) and instance.Scale or nil
+    if scale then data.Properties.Scale = encodeValue(scale) end
+    
+    local offset = pcall(function() return instance.Offset end) and instance.Offset or nil
+    if offset then data.Properties.Offset = encodeValue(offset) end
+    
+    local meshType = pcall(function() return instance.MeshType end) and instance.MeshType or nil
+    if meshType then data.Properties.MeshType = encodeValue(meshType) end
+
+elseif instance:IsA("BlockMesh") or instance:IsA("CylinderMesh") then
+    local scale = pcall(function() return instance.Scale end) and instance.Scale or nil
+    if scale then data.Properties.Scale = encodeValue(scale) end
+    
+    local offset = pcall(function() return instance.Offset end) and instance.Offset or nil
+    if offset then data.Properties.Offset = encodeValue(offset) end
+end
         end
         
         if instance:IsA("Part") or instance:IsA("MeshPart") then
