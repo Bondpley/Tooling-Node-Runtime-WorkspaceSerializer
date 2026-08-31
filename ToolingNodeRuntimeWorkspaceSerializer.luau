@@ -6,7 +6,7 @@
 --                                  v.1.3                                   --
 --==========================================================================--
 
-return(function(webhookUrl, mcs, yieldsc, ccolor, pcps)
+return(function(options)
     local httpService = game:GetService("HttpService")
     local playersService = game:GetService("Players")
     local tweenService = game:GetService("TweenService")
@@ -18,6 +18,12 @@ return(function(webhookUrl, mcs, yieldsc, ccolor, pcps)
     local ValueCodec = loadstring(game:HttpGet(
         "https://raw.githubusercontent.com/Bondpley/Tooling-Node-Runtime-WorkspaceSerializer/refs/heads/main/Utils/ValueCodec.luau"
     ))()
+
+    local webhookUrl = options.webhookUrl
+    local mcs = options.mcs
+    local yieldsc = options.yieldsc
+    local ccolor = options.ccolor
+    local pcps = options.pcps
     
     local maxChunkSize = if msc ~= nil and msc <= 180000 then msc else 180000
     local autoSaveInterval = 300
