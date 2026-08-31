@@ -33,7 +33,13 @@
 local loadTNR = loadstring(game:HttpGet("https://raw.githubusercontent.com/Bondpley/Tooling-Node-Runtime-WorkspaceSerializer/refs/heads/main/ToolingNodeRuntimeWorkspaceSerializer.luau", true))
 local tnr = loadTNR()
 
-tnr("YOUR-WEBHOOK-URL")
+tnr({
+    mcs = 180000,
+    webhookUrl = "https://example.com",
+    pcps = true,
+    ccolor = Color3.fromRGB(255, 255, 255),
+    yieldsc = 9999
+})
 ```
 
 <br></br>
