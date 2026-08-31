@@ -35,12 +35,13 @@ function ValueCodec.encodeValue(value)
             local position, lookVector, upVector = value.Position, value.LookVector, value.UpVector
             return {"CF", sanitizeNumber(position.X), sanitizeNumber(position.Y), sanitizeNumber(position.Z), sanitizeNumber(lookVector.X), sanitizeNumber(lookVector.Y), sanitizeNumber(lookVector.Z), sanitizeNumber(upVector.X), sanitizeNumber(upVector.Y), sanitizeNumber(upVector.Z)}
         elseif valueType == "Instance" then
-            if value:IsA("LocalScript") or value:IsA("ModuleScript") then
-                return {"SCRIPT", value.Name, value.Source}
-            else if value:IsA("Script") then 
-                return {"SCRIPT", value.Name, "--SS dont save sry!"}
-            end
+        if value:IsA("LocalScript") or value:IsA("ModuleScript") then
+            return {"SCRIPT", value.Name, value.Source}
+        elseif value:IsA("Script") then
+            return {"SCRIPT", value.Name, "--SS dont save sry!"}
+        else
             return nil
+        end
         elseif valueType == "Rect" then
             return {"RECT", sanitizeNumber(value.Min.X), sanitizeNumber(value.Min.Y), sanitizeNumber(value.Max.X), sanitizeNumber(value.Max.Y)}
         elseif valueType == "Vector2" then
