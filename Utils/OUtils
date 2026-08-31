@@ -1,0 +1,825 @@
+local Utility = {}
+
+function Utility.deepCopy(original, cache)
+    cache = cache or {}
+    if type(original) ~= "table" then
+        return original
+    end
+    if cache[original] then
+        return cache[original]
+    end
+    local copy = {}
+    cache[original] = copy
+    for key, value in pairs(original) do
+        copy[key] = Utility.deepCopy(value, cache)
+    end
+    return copy
+end
+
+function Utility.shallowCopy(original)
+    local copy = {}
+    for key, value in pairs(original) do
+        copy[key] = value
+    end
+    return copy
+end
+
+function Utility.merge(...)
+    local result = {}
+    for _, tbl in ipairs({...}) do
+        for key, value in pairs(tbl) do
+            result[key] = value
+        end
+    end
+    return result
+end
+
+function Utility.deepMerge(target, source)
+    for key, value in pairs(source) do
+        if type(value) == "table" and type(target[key]) == "table" then
+            Utility.deepMerge(target[key], value)
+        else
+            target[key] = value
+        end
+    end
+    return target
+end
+
+function Utility.map(tbl, func)
+    local result = {}
+    for key, value in pairs(tbl) do
+        result[key] = func(value, key, tbl)
+    end
+    return result
+end
+
+function Utility.filter(tbl, predicate)
+    local result = {}
+    for key, value in pairs(tbl) do
+        if predicate(value, key, tbl) then
+            result[key] = value
+        end
+    end
+    return result
+end
+
+function Utility.reduce(tbl, func, initial)
+    local accumulator = initial
+    for key, value in pairs(tbl) do
+        accumulator = func(accumulator, value, key, tbl)
+    end
+    return accumulator
+end
+
+function Utility.find(tbl, predicate)
+    for key, value in pairs(tbl) do
+        if predicate(value, key, tbl) then
+            return value, key
+        end
+    end
+    return nil
+end
+
+function Utility.contains(tbl, value)
+    for _, v in pairs(tbl) do
+        if v == value then
+            return true
+        end
+    end
+    return false
+end
+
+function Utility.keys(tbl)
+    local keys = {}
+    for key, _ in pairs(tbl) do
+        table.insert(keys, key)
+    end
+    return keys
+end
+
+function Utility.values(tbl)
+    local values = {}
+    for _, value in pairs(tbl) do
+        table.insert(values, value)
+    end
+    return values
+end
+
+function Utility.invert(tbl)
+    local result = {}
+    for key, value in pairs(tbl) do
+        result[value] = key
+    end
+    return result
+end
+
+function Utility.size(tbl)
+    local count = 0
+    for _ in pairs(tbl) do
+        count = count + 1
+    end
+    return count
+end
+
+function Utility.isEmpty(tbl)
+    return next(tbl) == nil
+end
+
+function Utility.join(tbl, sep)
+    sep = sep or ", "
+    local parts = {}
+    for i, v in ipairs(tbl) do
+        parts[#parts+1] = tostring(v)
+    end
+    return table.concat(parts, sep)
+end
+
+function Utility.chunk(tbl, size)
+    local result = {}
+    local chunk = {}
+    for i, v in ipairs(tbl) do
+        table.insert(chunk, v)
+        if #chunk == size then
+            table.insert(result, chunk)
+            chunk = {}
+        end
+    end
+    if #chunk > 0 then
+        table.insert(result, chunk)
+    end
+    return result
+end
+
+function Utility.flatten(tbl, depth)
+    depth = depth or 1
+    local result = {}
+    for _, v in ipairs(tbl) do
+        if type(v) == "table" and depth > 0 then
+            for _, sub in ipairs(Utility.flatten(v, depth - 1)) do
+                table.insert(result, sub)
+            end
+        else
+            table.insert(result, v)
+        end
+    end
+    return result
+end
+
+function Utility.shuffle(tbl)
+    local n = #tbl
+    for i = n, 2, -1 do
+        local j = math.random(i)
+        tbl[i], tbl[j] = tbl[j], tbl[i]
+    end
+    return tbl
+end
+
+function Utility.sample(tbl, count)
+    count = count or 1
+    local shuffled = Utility.shallowCopy(tbl)
+    Utility.shuffle(shuffled)
+    local result = {}
+    for i = 1, math.min(count, #shuffled) do
+        table.insert(result, shuffled[i])
+    end
+    return result
+end
+
+function Utility.intersection(tbl1, tbl2)
+    local set = {}
+    for _, v in ipairs(tbl2) do
+        set[v] = true
+    end
+    local result = {}
+    for _, v in ipairs(tbl1) do
+        if set[v] then
+            table.insert(result, v)
+            set[v] = nil
+        end
+    end
+    return result
+end
+
+function Utility.union(tbl1, tbl2)
+    local set = {}
+    local result = {}
+    for _, v in ipairs(tbl1) do
+        if not set[v] then
+            set[v] = true
+            table.insert(result, v)
+        end
+    end
+    for _, v in ipairs(tbl2) do
+        if not set[v] then
+            set[v] = true
+            table.insert(result, v)
+        end
+    end
+    return result
+end
+
+function Utility.difference(tbl1, tbl2)
+    local set = {}
+    for _, v in ipairs(tbl2) do
+        set[v] = true
+    end
+    local result = {}
+    for _, v in ipairs(tbl1) do
+        if not set[v] then
+            table.insert(result, v)
+        end
+    end
+    return result
+end
+
+function Utility.zip(...)
+    local arrays = {...}
+    local minLen = math.huge
+    for _, arr in ipairs(arrays) do
+        if #arr < minLen then
+            minLen = #arr
+        end
+    end
+    local result = {}
+    for i = 1, minLen do
+        local tuple = {}
+        for _, arr in ipairs(arrays) do
+            table.insert(tuple, arr[i])
+        end
+        table.insert(result, tuple)
+    end
+    return result
+end
+
+function Utility.unzip(tuples)
+    if #tuples == 0 then return {} end
+    local result = {}
+    for i = 1, #tuples[1] do
+        result[i] = {}
+        for _, tuple in ipairs(tuples) do
+            table.insert(result[i], tuple[i])
+        end
+    end
+    return result
+end
+
+function Utility.split(str, delimiter)
+    delimiter = delimiter or "%s+"
+    local result = {}
+    for match in string.gmatch(str, "([^" .. delimiter .. "]+)") do
+        table.insert(result, match)
+    end
+    return result
+end
+
+function Utility.trim(str)
+    return string.gsub(str, "^%s*(.-)%s*$", "%1")
+end
+
+function Utility.startsWith(str, prefix)
+    return string.sub(str, 1, #prefix) == prefix
+end
+
+function Utility.endsWith(str, suffix)
+    return string.sub(str, -#suffix) == suffix
+end
+
+function Utility.capitalize(str)
+    return string.upper(string.sub(str, 1, 1)) .. string.sub(str, 2)
+end
+
+function Utility.toSnakeCase(str)
+    return string.gsub(str, "(%l)(%u)", "%1_%2"):lower()
+end
+
+function Utility.toCamelCase(str)
+    local result = string.gsub(str, "_([%l])", function(c)
+        return string.upper(c)
+    end)
+    return string.upper(string.sub(result, 1, 1)) .. string.sub(result, 2)
+end
+
+function Utility.reverse(str)
+    local reversed = {}
+    for i = #str, 1, -1 do
+        table.insert(reversed, string.sub(str, i, i))
+    end
+    return table.concat(reversed)
+end
+
+function Utility.isPalindrome(str)
+    local cleaned = Utility.trim(string.lower(str))
+    return cleaned == Utility.reverse(cleaned)
+end
+
+function Utility.randomString(length)
+    length = length or 8
+    local chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+    local result = {}
+    for i = 1, length do
+        local pos = math.random(1, #chars)
+        table.insert(result, string.sub(chars, pos, pos))
+    end
+    return table.concat(result)
+end
+
+function Utility.escapePattern(str)
+    return string.gsub(str, "(%W)", "%%%1")
+end
+
+function Utility.clamp(value, min, max)
+    return math.max(min, math.min(max, value))
+end
+
+function Utility.lerp(a, b, t)
+    return a + (b - a) * t
+end
+
+function Utility.mapRange(value, fromLow, fromHigh, toLow, toHigh)
+    local t = (value - fromLow) / (fromHigh - fromLow)
+    return Utility.lerp(toLow, toHigh, t)
+end
+
+function Utility.randomInt(min, max)
+    return math.random(min, max)
+end
+
+function Utility.randomFloat(min, max)
+    return min + math.random() * (max - min)
+end
+
+function Utility.round(num, decimals)
+    decimals = decimals or 0
+    local mult = 10^decimals
+    return math.floor(num * mult + 0.5) / mult
+end
+
+function Utility.approxEqual(a, b, tolerance)
+    tolerance = tolerance or 1e-6
+    return math.abs(a - b) <= tolerance
+end
+
+function Utility.factorial(n)
+    if n < 0 then return nil end
+    if n == 0 then return 1 end
+    local result = 1
+    for i = 2, n do
+        result = result * i
+    end
+    return result
+end
+
+function Utility.gcd(a, b)
+    a = math.abs(a)
+    b = math.abs(b)
+    while b ~= 0 do
+        a, b = b, a % b
+    end
+    return a
+end
+
+function Utility.lcm(a, b)
+    if a == 0 or b == 0 then return 0 end
+    return math.abs(a * b) / Utility.gcd(a, b)
+end
+
+function Utility.isPrime(n)
+    if n <= 1 then return false end
+    if n <= 3 then return true end
+    if n % 2 == 0 or n % 3 == 0 then return false end
+    local i = 5
+    while i * i <= n do
+        if n % i == 0 or n % (i + 2) == 0 then
+            return false
+        end
+        i = i + 6
+    end
+    return true
+end
+
+function Utility.wait(seconds)
+    if seconds and seconds > 0 then
+        task.wait(seconds)
+    else
+        task.wait()
+    end
+end
+
+function Utility.deltaTime()
+    local start = os.clock()
+    return function()
+        return os.clock() - start
+    end
+end
+
+function Utility.createTimer()
+    local startTime = 0
+    local running = false
+    local accumulated = 0
+    return {
+        start = function(self)
+            if not running then
+                running = true
+                startTime = os.clock()
+            end
+        end,
+        stop = function(self)
+            if running then
+                accumulated = accumulated + (os.clock() - startTime)
+                running = false
+            end
+        end,
+        reset = function(self)
+            accumulated = 0
+            if running then
+                startTime = os.clock()
+            end
+        end,
+        getElapsed = function(self)
+            if running then
+                return accumulated + (os.clock() - startTime)
+            else
+                return accumulated
+            end
+        end,
+        isRunning = function(self)
+            return running
+        end
+    }
+end
+
+function Utility.timestamp()
+    return os.time()
+end
+
+function Utility.formatDuration(seconds)
+    local days = math.floor(seconds / 86400)
+    seconds = seconds % 86400
+    local hours = math.floor(seconds / 3600)
+    seconds = seconds % 3600
+    local minutes = math.floor(seconds / 60)
+    seconds = seconds % 60
+    local parts = {}
+    if days > 0 then table.insert(parts, days .. "d") end
+    if hours > 0 then table.insert(parts, hours .. "h") end
+    if minutes > 0 then table.insert(parts, minutes .. "m") end
+    if seconds > 0 or #parts == 0 then table.insert(parts, string.format("%.0f", seconds) .. "s") end
+    return table.concat(parts, " ")
+end
+
+function Utility.class(base)
+    local cls = {}
+    cls.__index = cls
+    cls.super = base
+    if base then
+        setmetatable(cls, { __index = base })
+    end
+    function cls:new(...)
+        local instance = setmetatable({}, cls)
+        if instance.initialize then
+            instance:initialize(...)
+        end
+        return instance
+    end
+    return cls
+end
+
+function Utility.debounce(func, waitTime, immediate)
+    local timer = nil
+    return function(...)
+        local args = {...}
+        if immediate and not timer then
+            func(unpack(args))
+        end
+        if timer then
+            timer:stop()
+            timer:destroy()
+        end
+        timer = task.delay(waitTime, function()
+            timer = nil
+            if not immediate then
+                func(unpack(args))
+            end
+        end)
+    end
+end
+
+function Utility.throttle(func, waitTime, options)
+    local lastCall = 0
+    local trailingTimer = nil
+    local leading = options and options.leading ~= false
+    local trailing = options and options.trailing ~= false
+    return function(...)
+        local now = os.clock()
+        local args = {...}
+        if now - lastCall >= waitTime then
+            if leading then
+                lastCall = now
+                func(unpack(args))
+            end
+            if trailingTimer then
+                trailingTimer:stop()
+                trailingTimer:destroy()
+                trailingTimer = nil
+            end
+        else
+            if trailing and not trailingTimer then
+                trailingTimer = task.delay(waitTime - (now - lastCall), function()
+                    trailingTimer = nil
+                    lastCall = os.clock()
+                    func(unpack(args))
+                end)
+            end
+        end
+    end
+end
+
+function Utility.once(func)
+    local called = false
+    return function(...)
+        if not called then
+            called = true
+            return func(...)
+        end
+    end
+end
+
+function Utility.memoize(func)
+    local cache = {}
+    return function(...)
+        local key = table.concat({...}, ",")
+        if cache[key] == nil then
+            cache[key] = func(...)
+        end
+        return cache[key]
+    end
+end
+
+function Utility.partial(func, ...)
+    local args = {...}
+    return function(...)
+        local newArgs = {}
+        for i, v in ipairs(args) do
+            table.insert(newArgs, v)
+        end
+        for i, v in ipairs({...}) do
+            table.insert(newArgs, v)
+        end
+        return func(unpack(newArgs))
+    end
+end
+
+function Utility.compose(...)
+    local funcs = {...}
+    return function(x)
+        local result = x
+        for i = #funcs, 1, -1 do
+            result = funcs[i](result)
+        end
+        return result
+    end
+end
+
+function Utility.pipe(...)
+    local funcs = {...}
+    return function(x)
+        local result = x
+        for _, f in ipairs(funcs) do
+            result = f(result)
+        end
+        return result
+    end
+end
+
+function Utility.Queue()
+    local self = { items = {} }
+    function self:push(value)
+        table.insert(self.items, value)
+    end
+    function self:pop()
+        return table.remove(self.items, 1)
+    end
+    function self:peek()
+        return self.items[1]
+    end
+    function self:isEmpty()
+        return #self.items == 0
+    end
+    function self:size()
+        return #self.items
+    end
+    return self
+end
+
+function Utility.Stack()
+    local self = { items = {} }
+    function self:push(value)
+        table.insert(self.items, value)
+    end
+    function self:pop()
+        return table.remove(self.items)
+    end
+    function self:peek()
+        return self.items[#self.items]
+    end
+    function self:isEmpty()
+        return #self.items == 0
+    end
+    function self:size()
+        return #self.items
+    end
+    return self
+end
+
+function Utility.PriorityQueue()
+    local self = { heap = {} }
+    local function heapifyUp(idx)
+        while idx > 1 do
+            local parent = math.floor(idx / 2)
+            if self.heap[parent].priority <= self.heap[idx].priority then
+                break
+            end
+            self.heap[parent], self.heap[idx] = self.heap[idx], self.heap[parent]
+            idx = parent
+        end
+    end
+    local function heapifyDown(idx)
+        while true do
+            local left = idx * 2
+            local right = idx * 2 + 1
+            local smallest = idx
+            if left <= #self.heap and self.heap[left].priority < self.heap[smallest].priority then
+                smallest = left
+            end
+            if right <= #self.heap and self.heap[right].priority < self.heap[smallest].priority then
+                smallest = right
+            end
+            if smallest == idx then break end
+            self.heap[idx], self.heap[smallest] = self.heap[smallest], self.heap[idx]
+            idx = smallest
+        end
+    end
+    function self:push(value, priority)
+        table.insert(self.heap, {value = value, priority = priority})
+        heapifyUp(#self.heap)
+    end
+    function self:pop()
+        if #self.heap == 0 then return nil end
+        local top = self.heap[1]
+        self.heap[1] = self.heap[#self.heap]
+        table.remove(self.heap)
+        if #self.heap > 0 then
+            heapifyDown(1)
+        end
+        return top.value
+    end
+    function self:peek()
+        return self.heap[1] and self.heap[1].value or nil
+    end
+    function self:isEmpty()
+        return #self.heap == 0
+    end
+    function self:size()
+        return #self.heap
+    end
+    return self
+end
+
+function Utility.LRUCache(maxSize)
+    local self = { maxSize = maxSize or 10, cache = {}, order = {} }
+    function self:get(key)
+        local value = self.cache[key]
+        if value ~= nil then
+            for i, k in ipairs(self.order) do
+                if k == key then
+                    table.remove(self.order, i)
+                    break
+                end
+            end
+            table.insert(self.order, key)
+            return value
+        end
+        return nil
+    end
+    function self:set(key, value)
+        if self.cache[key] ~= nil then
+            for i, k in ipairs(self.order) do
+                if k == key then
+                    table.remove(self.order, i)
+                    break
+                end
+            end
+        else
+            if #self.order >= self.maxSize then
+                local old = table.remove(self.order, 1)
+                self.cache[old] = nil
+            end
+        end
+        self.cache[key] = value
+        table.insert(self.order, key)
+    end
+    function self:clear()
+        self.cache = {}
+        self.order = {}
+    end
+    return self
+end
+
+function Utility.Signal()
+    local self = { connections = {} }
+    function self:connect(callback)
+        table.insert(self.connections, callback)
+        return {
+            disconnect = function()
+                for i, conn in ipairs(self.connections) do
+                    if conn == callback then
+                        table.remove(self.connections, i)
+                        break
+                    end
+                end
+            end
+        }
+    end
+    function self:fire(...)
+        for _, callback in ipairs(self.connections) do
+            callback(...)
+        end
+    end
+    function self:clear()
+        self.connections = {}
+    end
+    function self:count()
+        return #self.connections
+    end
+    return self
+end
+
+function Utility.findChild(parent, name)
+    for _, child in ipairs(parent:GetChildren()) do
+        if child.Name == name then
+            return child
+        end
+        local found = Utility.findChild(child, name)
+        if found then
+            return found
+        end
+    end
+    return nil
+end
+
+function Utility.findAllChildren(parent, className)
+    local results = {}
+    for _, child in ipairs(parent:GetChildren()) do
+        if child:IsA(className) then
+            table.insert(results, child)
+        end
+        for _, found in ipairs(Utility.findAllChildren(child, className)) do
+            table.insert(results, found)
+        end
+    end
+    return results
+end
+
+function Utility.waitForChild(parent, name, timeout)
+    timeout = timeout or 5
+    local start = os.clock()
+    while os.clock() - start < timeout do
+        local child = parent:FindFirstChild(name)
+        if child then return child end
+        task.wait()
+    end
+    return nil
+end
+
+function Utility.getService(serviceName)
+    return game:GetService(serviceName)
+end
+
+function Utility.try(func, ...)
+    local success, result = pcall(func, ...)
+    return success, result
+end
+
+function Utility.inspect(tbl, indent)
+    indent = indent or ""
+    local result = "{"
+    for key, value in pairs(tbl) do
+        if type(value) == "table" then
+            result = result .. "\n" .. indent .. "  " .. tostring(key) .. " = " .. Utility.inspect(value, indent .. "  ")
+        else
+            result = result .. "\n" .. indent .. "  " .. tostring(key) .. " = " .. tostring(value)
+        end
+    end
+    result = result .. "\n" .. indent .. "}"
+    return result
+end
+
+function Utility.uuid()
+    local template = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx"
+    return string.gsub(template, "[xy]", function(c)
+        local v = (c == "x") and math.random(0, 15) or math.random(8, 11)
+        return string.format("%x", v)
+    end)
+end
+
+return Utility
