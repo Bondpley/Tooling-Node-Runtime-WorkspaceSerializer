@@ -35,8 +35,10 @@ function ValueCodec.encodeValue(value)
             local position, lookVector, upVector = value.Position, value.LookVector, value.UpVector
             return {"CF", sanitizeNumber(position.X), sanitizeNumber(position.Y), sanitizeNumber(position.Z), sanitizeNumber(lookVector.X), sanitizeNumber(lookVector.Y), sanitizeNumber(lookVector.Z), sanitizeNumber(upVector.X), sanitizeNumber(upVector.Y), sanitizeNumber(upVector.Z)}
         elseif valueType == "Instance" then
-            if value:IsA("Script") or value:IsA("LocalScript") or value:IsA("ModuleScript") then
-                return {"SCRIPT", value.Name}
+            if value:IsA("LocalScript") or value:IsA("ModuleScript") then
+                return {"SCRIPT", value.Name, value.Source}
+            else if value:IsA("Script") then 
+                return {"SCRIPT", value.Name, "--SS dont save sry!"}
             end
             return nil
         elseif valueType == "Rect" then
@@ -108,7 +110,7 @@ function ValueCodec.decodeValue(data)
         elseif tag == "SCRIPT" then
             local script = Instance.new("Script")
             script.Name = data[2]
-            script.Source = " "
+            script.Source = data[3]
             return script
         elseif tag == "RECT" then
             return Rect.new(data[2], data[3], data[4], data[5])
