@@ -68,7 +68,7 @@ return(function(webhookUrl, mcs, yieldsc, ccolor, pcps)
         end
         
         if instance:IsA("MeshPart") or instance:IsA("SpecialMesh") or instance:IsA("BlockMesh") or instance:IsA("CylinderMesh") then
-if instance:IsA("MeshPart") then
+    if instance:IsA("MeshPart") then
     local meshId = pcall(function() return instance.MeshId end) and instance.MeshId or ""
     local textureId = pcall(function() return instance.TextureID end) and instance.TextureID or ""
     if meshId ~= "" then data.Properties.MeshId = meshId end
@@ -87,7 +87,16 @@ if instance:IsA("MeshPart") then
             initialSize = valHidden
         end
     end
-    if initialSize then data.Properties.InitialSize = encodeValue(initialSize) end
+
+    if not initialSize then
+        local sizeOk, sizeVal = pcall(function() return instance.Size end)
+        if sizeOk and sizeVal then
+            initialSize = sizeVal
+        end
+    end
+    if initialSize then
+        data.Properties.InitialSize = encodeValue(initialSize)
+    end
 
 elseif instance:IsA("SpecialMesh") then
     local meshId = pcall(function() return instance.MeshId end) and instance.MeshId or ""
