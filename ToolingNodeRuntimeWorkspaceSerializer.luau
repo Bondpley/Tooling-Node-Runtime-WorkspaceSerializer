@@ -303,12 +303,9 @@ if pcps == nil or pcps == true then
     local servicesToSave = {
         workspace,
         game:GetService("ReplicatedStorage"),
-        game:GetService("ServerStorage"),
         game:GetService("Lighting"),
-        game:GetService("SoundService"),
         game:GetService("StarterPack"),
         game:GetService("StarterGui"),
-        game:GetService("StarterPlayer"),
     }
 
     local root = {}
