@@ -3,7 +3,7 @@
 ------------------------------------------------------------------------------
 --   https://github.com/Bondpley/Tooling-Node-Runtime-WorkspaceSerializer   --
 --                               By Bondpley                                --
---                                  v.1.4                                   --
+--                                  v.1.43                                  --
 --==========================================================================--
 
 return(function(options)
