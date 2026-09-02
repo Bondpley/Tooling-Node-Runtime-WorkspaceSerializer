@@ -3,7 +3,7 @@
 ------------------------------------------------------------------------------
 --   https://github.com/Bondpley/Tooling-Node-Runtime-WorkspaceSerializer   --
 --                               By Bondpley                                --
---                                  v.1.3                                   --
+--                                  v.1.4                                   --
 --==========================================================================--
 
 return(function(options)
@@ -296,33 +296,76 @@ end
     
     local function saveWorkspace()
 
-        if pcps == nil or pcps == true then
-            pcamera.CameraType = Enum.CameraType.Scriptable
-        end
+if pcps == nil or pcps == true then
+        pcamera.CameraType = Enum.CameraType.Scriptable
+    end
 
-        local root = {}
-        for _, object in ipairs(workspace:GetChildren()) do
-            local encoded = encodeInstance(object)
+    local servicesToSave = {
+        workspace,
+        game:GetService("ReplicatedStorage"),
+        game:GetService("ServerStorage"),
+        game:GetService("Lighting"),
+        game:GetService("SoundService"),
+        game:GetService("StarterPack"),
+        game:GetService("StarterGui"),
+        game:GetService("StarterPlayer"),
+    }
+
+    local root = {}
+    for _, service in ipairs(servicesToSave) do
+        if service then
+            local encoded = encodeInstance(service)
             if encoded then
+                encoded._serviceName = service.Name
                 table.insert(root, encoded)
             end
         end
-        
-        local success, json = pcall(httpService.JSONEncode, httpService, root)
-        if not success then
-            root = {}
-            for _, object in ipairs(workspace:GetChildren()) do
-                if not object:IsA("Model") and not object:IsA("Folder") then
-                    local encoded = encodeInstance(object)
-                    if encoded then
-                        table.insert(root, encoded)
-                    end
+    end
+
+    local success, json = pcall(httpService.JSONEncode, httpService, root)
+    if not success then
+        root = {}
+        for _, service in ipairs(servicesToSave) do
+            if service then
+                local encoded = encodeInstance(service)
+                if encoded then
+                    encoded._serviceName = service.Name
+                    table.insert(root, encoded)
                 end
             end
-            success, json = pcall(httpService.JSONEncode, httpService, root)
-            if not success then error("") end
         end
-        return json
+        success, json = pcall(httpService.JSONEncode, httpService, root)
+        if not success then error("Failed to encode game data") end
+    end
+    return json
+
+        -- if pcps == nil or pcps == true then
+        --     pcamera.CameraType = Enum.CameraType.Scriptable
+        -- end
+
+        -- local root = {}
+        -- for _, object in ipairs(workspace:GetChildren()) do
+        --     local encoded = encodeInstance(object)
+        --     if encoded then
+        --         table.insert(root, encoded)
+        --     end
+        -- end
+        
+        -- local success, json = pcall(httpService.JSONEncode, httpService, root)
+        -- if not success then
+        --     root = {}
+        --     for _, object in ipairs(workspace:GetChildren()) do
+        --         if not object:IsA("Model") and not object:IsA("Folder") then
+        --             local encoded = encodeInstance(object)
+        --             if encoded then
+        --                 table.insert(root, encoded)
+        --             end
+        --         end
+        --     end
+        --     success, json = pcall(httpService.JSONEncode, httpService, root)
+        --     if not success then error("") end
+        -- end
+        -- return json
     end
     
     local function loadWorkspace(json)
