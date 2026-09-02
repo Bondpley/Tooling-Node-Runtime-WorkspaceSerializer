@@ -656,12 +656,13 @@ if pcps == nil or pcps == true then
     local loadChunksButton = createActionButton("", UDim2.new(0.25, 6, 0, 0), UDim2.new(0.25, -6, 1, 0))
     local loadFullButton = createActionButton("", UDim2.new(0.5, 6, 0, 0), UDim2.new(0.25, -6, 1, 0))
     local copyButton = createActionButton("", UDim2.new(0.75, 6, 0, 0), UDim2.new(0.25, -6, 1, 0), Color3.fromRGB(180, 180, 180))
+    local hue = 0
 
-runService.Heartbeat:Connect(function()
-    hue = (hue + 0.5) % 360
-    local color = Color3.fromHSV(hue / 360, 1, 1)
-    saveButton.BackgroundColor3 = color:Lerp(Color3.new(1, 1, 1), 0.3)
-end)
+    runService.Heartbeat:Connect(function()
+        hue = (hue + 0.5) % 360
+        local color = Color3.fromHSV(hue / 360, 1, 1)
+        saveButton.BackgroundColor3 = color:Lerp(Color3.new(1, 1, 1), 0.3)
+    end)
     
     local toastLabel = Instance.new("TextLabel")
     toastLabel.Parent = containerFrame
