@@ -301,10 +301,15 @@ if pcps == nil or pcps == true then
         pcamera.CameraType = Enum.CameraType.Scriptable
     end
 
+    local servicesToSave = {
+        workspace,
+        game.StarterGui,
+    }
+
     if srvcs and srvcs ~= nil then
-        local servicesToSave = srvcs
+        servicesToSave = srvcs
     else
-        local servicesToSave = {
+        servicesToSave = {
         workspace,
         game.StarterGui,
     }
