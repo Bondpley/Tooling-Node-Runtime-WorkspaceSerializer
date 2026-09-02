@@ -306,7 +306,7 @@ if pcps == nil or pcps == true then
     else
         local servicesToSave = {
         workspace,
-        game:GetService("StarterGui"),
+        game.StarterGui,
     }
     end
 
