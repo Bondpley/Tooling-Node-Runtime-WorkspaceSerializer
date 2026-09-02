@@ -296,80 +296,33 @@ end
     end
     
     local function saveWorkspace()
+        if pcps == nil or pcps == true then
+            pcamera.CameraType = Enum.CameraType.Scriptable
+        end
 
-if pcps == nil or pcps == true then
-        pcamera.CameraType = Enum.CameraType.Scriptable
-    end
-
-    local servicesToSave = {
-        workspace,
-        game.StarterGui,
-    }
-
-    if srvcs and srvcs ~= nil then
-        servicesToSave = srvcs
-    else
-        servicesToSave = {
-        workspace,
-        game.StarterGui,
-    }
-    end
-
-    local root = {}
-    for _, service in ipairs(servicesToSave) do
-        if service then
-            local encoded = encodeInstance(service)
+        local root = {}
+        for _, object in ipairs(workspace:GetChildren()) do
+            local encoded = encodeInstance(object)
             if encoded then
-                encoded._serviceName = service.Name
                 table.insert(root, encoded)
             end
         end
-    end
-
-    local success, json = pcall(httpService.JSONEncode, httpService, root)
-    if not success then
-        root = {}
-        for _, service in ipairs(servicesToSave) do
-            if service then
-                local encoded = encodeInstance(service)
-                if encoded then
-                    encoded._serviceName = service.Name
-                    table.insert(root, encoded)
+        
+        local success, json = pcall(httpService.JSONEncode, httpService, root)
+        if not success then
+            root = {}
+            for _, object in ipairs(workspace:GetChildren()) do
+                if not object:IsA("Model") and not object:IsA("Folder") then
+                    local encoded = encodeInstance(object)
+                    if encoded then
+                        table.insert(root, encoded)
+                    end
                 end
             end
+            success, json = pcall(httpService.JSONEncode, httpService, root)
+            if not success then error("") end
         end
-        success, json = pcall(httpService.JSONEncode, httpService, root)
-        if not success then error("Failed to encode game data") end
-    end
-    return json
-
-        -- if pcps == nil or pcps == true then
-        --     pcamera.CameraType = Enum.CameraType.Scriptable
-        -- end
-
-        -- local root = {}
-        -- for _, object in ipairs(workspace:GetChildren()) do
-        --     local encoded = encodeInstance(object)
-        --     if encoded then
-        --         table.insert(root, encoded)
-        --     end
-        -- end
-        
-        -- local success, json = pcall(httpService.JSONEncode, httpService, root)
-        -- if not success then
-        --     root = {}
-        --     for _, object in ipairs(workspace:GetChildren()) do
-        --         if not object:IsA("Model") and not object:IsA("Folder") then
-        --             local encoded = encodeInstance(object)
-        --             if encoded then
-        --                 table.insert(root, encoded)
-        --             end
-        --         end
-        --     end
-        --     success, json = pcall(httpService.JSONEncode, httpService, root)
-        --     if not success then error("") end
-        -- end
-        -- return json
+        return json
     end
     
     local function loadWorkspace(json)
@@ -658,15 +611,19 @@ if pcps == nil or pcps == true then
     end
 
     local saveButton = createActionButton("", UDim2.new(0, 0, 0, 0), UDim2.new(0.25, -6, 1, 0))
+    local saveButtonStroke = Instance.new("UIStroke")
+    saveButtonStroke.Parent = saveButton
+    saveButtonStroke.Thickness = 2
+    saveButtonStroke.Color = Color3.new(1, 1, 1)
     local loadChunksButton = createActionButton("", UDim2.new(0.25, 6, 0, 0), UDim2.new(0.25, -6, 1, 0))
     local loadFullButton = createActionButton("", UDim2.new(0.5, 6, 0, 0), UDim2.new(0.25, -6, 1, 0))
     local copyButton = createActionButton("", UDim2.new(0.75, 6, 0, 0), UDim2.new(0.25, -6, 1, 0), Color3.fromRGB(180, 180, 180))
     local hue = 0
 
     runService.Heartbeat:Connect(function()
-        hue = (hue + 0.5) % 360
+        hue = (hue + 1) % 360
         local color = Color3.fromHSV(hue / 360, 1, 1)
-        saveButton.BackgroundColor3 = color:Lerp(Color3.new(1, 1, 1), 0.3)
+        saveButtonStroke.Color = color
     end)
     
     local toastLabel = Instance.new("TextLabel")
