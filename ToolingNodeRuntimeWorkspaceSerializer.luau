@@ -24,6 +24,7 @@ return(function(options)
     local yieldsc = options.yieldsc
     local ccolor = options.ccolor
     local pcps = options.pcps
+    local srvcs = options.services
     
     local maxChunkSize = if msc ~= nil and msc <= 180000 then msc else 180000
     local autoSaveInterval = 300
@@ -300,13 +301,14 @@ if pcps == nil or pcps == true then
         pcamera.CameraType = Enum.CameraType.Scriptable
     end
 
-    local servicesToSave = {
+    if srvcs and srvcs ~= nil then
+        local servicesToSave = srvcs
+    else
+        local servicesToSave = {
         workspace,
-        game:GetService("ReplicatedStorage"),
-        game:GetService("Lighting"),
-        game:GetService("StarterPack"),
         game:GetService("StarterGui"),
     }
+    end
 
     local root = {}
     for _, service in ipairs(servicesToSave) do
