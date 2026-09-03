@@ -613,6 +613,7 @@ end
     local saveButton = createActionButton("", UDim2.new(0, 0, 0, 0), UDim2.new(0.25, -6, 1, 0))
     local saveButtonStroke = Instance.new("UIStroke")
     saveButtonStroke.Parent = saveButton
+    saveButtonStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
     saveButtonStroke.Thickness = 2
     saveButtonStroke.Color = Color3.new(1, 1, 1)
     local loadChunksButton = createActionButton("", UDim2.new(0.25, 6, 0, 0), UDim2.new(0.25, -6, 1, 0))
